@@ -1,4 +1,5 @@
 node_modules/
 build/
-openlp/
+/openlp/
+!*/openlp
 out/
