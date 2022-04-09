@@ -1,0 +1,20 @@
+.library-button-group {
+  --fg-primary: black;
+  --fg-highlight: white;
+
+  display: flex;
+  justify-content: center;
+}
+
+.library {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  place-items: stretch;
+}
+
+.library-container {
+  width: 100%;
+  
+  display: grid;
+  place-items: stretch;
+}

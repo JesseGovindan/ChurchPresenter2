@@ -1,0 +1,182 @@
+:root {
+  --c-bg: #23242A;
+  --c-bg2: #424650;
+  --c-bg3: #2a2d35;
+  --c-bg4: #3a3e54;
+  --c-high: #7f7cff;
+  --c-fg: #e2e3e3;
+  --c-fg2: #b2b8ca;
+  --c-black: black;
+
+  --btn-size: 32px;
+  --spacing: 0.5em;
+}
+
+/* COMPOSITIONS ----------------------------------------------------------------------------------*/
+.page {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+  background-color: var(--c-bg);
+  padding: var(--spacing);
+  gap: var(--spacing);
+}
+
+.surrounded {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-content: center;
+}
+
+.centered {
+  display: grid;
+  place-items: center;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.row-with-header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+.b-right {
+  border-right: 2px solid var(--c-bg2);
+}
+
+
+/* UTILITIES -------------------------------------------------------------------------------------*/
+.c-fg {
+  color: var(--c-fg);
+}
+
+.c-fg2 {
+  color: var(--c-fg2);
+}
+
+.c-black {
+  color: var(--c-black);
+}
+
+.rounded {
+  border-radius: var(--spacing);
+}
+
+.squared {
+  width: var(--btn-size);
+  height: var(--btn-size);
+}
+
+.hidden {
+  opacity: 0;
+}
+
+.not-included {
+  display: none;
+}
+
+.split-linebreaks {
+  white-space: pre-line;
+}
+
+.min-w-1 {
+  min-width: 1rem;
+}
+
+.min-w-2 {
+  min-width: 2rem;
+}
+
+.min-w-3 {
+  min-width: 3rem;
+}
+
+/* BLOCK -----------------------------------------------------------------------------------------*/
+.title {
+  font-size: 1.5em;
+}
+
+.button {
+  outline: none;
+  border: none;
+  background-color: var(--c-bg4);
+  color: var(--c-high);
+
+  &:hover {
+    outline: 2px solid var(--c-high);
+  }
+}
+
+.service-list {
+  background-color: var(--c-bg3);
+  border: 2px solid var(--c-bg2);
+  overflow-y: auto;
+}
+
+.list-item {
+  border-bottom: 2px solid var(--c-bg2);
+
+  & > * {
+    padding: 0.5em 0.5em;
+  }
+
+  &:hover {
+    cursor: pointer;
+    color: var(--c-fg);
+    background-color: var(--c-bg2);
+  }
+
+  &:active {
+    color: var(--c-high);
+    background-color: var(--c-bg4);
+  }
+}
+
+.service-item {
+  padding: 0.5em 0.5em;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  color: var(--c-fg2);
+
+  svg {
+    min-width: 1em;
+  }
+
+  p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &:not(:last-child):after {
+    position: absolute;
+    content: '';
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background-color: var(--c-bg2);
+  }
+
+  &:hover {
+    cursor: pointer;
+    color: var(--c-fg);
+    background-color: var(--c-bg2);
+  }
+
+  &:active {
+    color: var(--c-high);
+    background-color: var(--c-bg4);
+  }
+}
+
+/* EXCEPTIONS ------------------------------------------------------------------------------------*/
+*[data-active='true'] {
+  background-color: var(--c-bg4);
+  color: white;
+}

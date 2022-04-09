@@ -1,0 +1,117 @@
+#root {
+  height: 100vh;
+  overflow-y: hidden;
+}
+
+.app {
+  --fg-primary: white;
+  --fg-dark: #696969;
+  --fg-highlight: #b9b9b9;
+  --bg-light: #c4c4c4;
+  --bg-dark: #464646;
+  --bg-white: white;
+  --highlight1: rgb(103, 70, 237);
+  --highlight1-lighter: rgba(103, 70, 237, 0.2);
+
+  height: 100%;
+  display: grid;
+  padding: 1em;
+  grid-template-rows: auto 1fr;
+  grid-gap: 1em;
+  place-items: center;
+  background-color: var(--bg-dark);
+}
+
+.mode-button-group {
+  font-size: 2em;
+}
+
+.button-group {
+  --gap: 0.25em;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--gap);
+}
+
+.button-group > button:first-child {
+  justify-self: end;
+}
+
+.button-group > button:last-child {
+  justify-self: start;
+}
+
+.button-group button {
+  text-align: center;
+  text-transform: capitalize;
+  color: var(--fg-dark);
+  font-size: inherit;
+  font-weight: 100;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  transition: color 250ms ease-in;
+}
+
+.button-group button:hover,
+.button-group button:focus {
+  color: var(--fg-highlight);
+}
+
+.vertical-separator {
+  height: calc(1em);
+  align-self: center;
+  width: 1px;
+  background-color: var(--fg-dark);
+}
+
+.button-group .selected,
+.button-group .selected:hover,
+.button-group .selected:focus {
+  color: var(--fg-primary);
+}
+
+.content {
+  place-self: stretch;
+  display: flex;
+  place-items: stretch;
+}
+
+.content:first-child {
+  margin-left: 0 !important;
+}
+
+.container {
+  display: grid;
+  place-items: stretch;
+
+  margin-inline: 0.5em;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-color: var(--bg-light);
+  width: 100%;
+
+  --transition-duration: 200ms;
+  --transition-duration2: 200ms;
+
+  transition: 
+    opacity var(--transition-duration) ease-out 200ms,
+    width var(--transition-duration2) ease-out,
+    margin-inline var(--transition-duration2) ease-out;
+}
+
+.container--hidden {
+  width: 0;
+  opacity: 0;
+  margin-inline: 0;
+  transition: 
+    opacity var(--transition-duration) ease-out,
+    width var(--transition-duration2) ease-out var(--transition-duration),
+    margin-inline var(--transition-duration2) ease-out var(--transition-duration);
+}
+
+.container-heading {
+  padding: 0.125rem 0;
+  box-shadow: 0 1px var(--fg-dark);
+}

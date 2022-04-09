@@ -1,0 +1,134 @@
+.stream-projector {
+  height: 100vh;
+  width: 100%;
+  background-color: transparent;
+  display: grid;
+  opacity: 1;
+
+  .scripture {
+    justify-self: stretch;
+    align-self: end;
+    background-color: rgba(0, 0, 0, 0.95);
+    display: grid;
+    grid-template-rows: 1fr auto;
+    padding: 1vh;
+    min-height: 33vh;
+
+    .verse {
+      padding-left: 20vh;
+      padding-right: 20vh;
+      place-self: center;
+      font-size: 4vh;
+      text-align: center;
+      font-family: jost;
+    }
+
+    .caption {
+      align-self: end;
+      justify-self: center;
+      font-family: jost;
+      font-size: 4vh;
+      font-weight: 600;
+    }
+  }
+
+  .lyric {
+    justify-self: center;
+    align-self: end;
+    white-space: pre-line;
+    word-wrap: normal;
+    text-align: center;
+    font-size: 6vh;
+    font-family: sfpro;
+    text-transform: uppercase;
+    -webkit-text-stroke: 0.2vh black;
+    padding-bottom: 10vh;
+    font-weight: 900;
+  }
+}
+
+.stream-projector[data-active='false'] {
+  & > * {
+    opacity: 0;
+  }
+}
+
+.overhead-projector[data-type='lyric'] {
+  background-image: url('../static/images/Aqua\ Background.jpg');
+}
+
+.overhead-projector[data-type='scripture'] {
+  background-image: url('../static/images/Bible.jpg');
+}
+
+.overhead-projector[data-active='false'] {
+  & > * {
+    opacity: 0;
+  }
+
+  background-color: black;
+  background-image: none;
+}
+
+.overhead-projector {
+  height: 100vh;
+  width: 100%;
+  display: grid;
+  opacity: 1;
+  gap: 10vh;
+
+  .scripture {
+    justify-self: stretch;
+    align-self: start;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    padding: 5vh;
+    color: white;
+    grid-gap: 5vh;
+    text-shadow: 
+      0 0 0.5vh black,
+      0 0 0.5vh black,
+      0 0 0.5vh black,
+      0 0 0.5vh black;
+
+    .verse {
+      grid-row: 2;
+      padding-inline: 10vh;
+      place-self: center;
+      font-size: 7vh;
+      text-align: center;
+      font-family: jost;
+    }
+
+    .caption {
+      grid-row: 1;
+      place-self: center;
+      font-family: jost;
+      font-size: 7vh;
+      font-weight: 600;
+    }
+  }
+
+  .lyric {
+    place-self: center;
+    white-space: pre-line;
+    word-wrap: normal;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 4vh;
+    font-size: 7vh;
+    font-family: sans-serif;
+    font-weight: 900;
+    color: hsl(0, 0, 90%);
+
+    .active {
+      text-shadow: 
+        0 0 0.5vh black,
+        0 0 0.5vh black,
+        0 0 0.5vh black,
+        0 0 0.5vh black;
+      color: white;
+    }
+  }
+}

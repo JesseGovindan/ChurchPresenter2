@@ -1,0 +1,65 @@
+.bible-library {
+  padding: 1rem 1rem 1rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-rows: auto 1fr;
+}
+
+.bible-library .search {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bible-library .search .search-row {
+  display: grid;
+  grid-template-columns: 2fr 3fr 1fr;
+  column-gap: 0.5rem;
+  align-items: center;
+}
+
+.bible-library .search .search-row label:first-child {
+  text-align: end;
+}
+
+.bible-library .search .search-row * {
+  width: 100%;
+}
+
+.bible-library .search .search-btn {
+  grid-column: 2 / span 1;
+}
+
+.verse-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 0.25rem;
+  border: 1px solid var(--bg-dark);
+  background-color: var(--bg-white);
+  list-style: none;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.verse-list .list-item {
+  padding: 0.25rem;
+  cursor: pointer;
+  transition: color 100ms ease-out;
+}
+
+.verse-list > .list-item:nth-child(2n) {
+  background-color: #F0F0F0;
+}
+
+.verse-list > .list-item:hover {
+  background-color: lightsteelblue;
+}
+
+.verse-list .list-item.list-item--selected,
+.verse-list .list-item.list-item--selected:hover {
+  background-color: lightskyblue;
+}

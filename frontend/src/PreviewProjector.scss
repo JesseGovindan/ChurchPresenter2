@@ -1,0 +1,40 @@
+.preview {
+  padding: 1rem 1rem;
+
+  .max-height {
+    .info {
+      text-align: center;
+    }
+
+    div[role='grid'] {
+      position: absolute;
+      inset: 0;
+      border-radius: 0.25rem;
+      border: 1px solid var(--bg-dark);
+      overflow-y: auto;
+
+      div[role='row'] {
+        display: grid;
+        grid-template-rows: 1fr;
+        grid-template-columns: 2em 1fr;
+        align-items: stretch;
+        border-bottom: 1px solid var(--bg-dark);
+
+        div[role='rowheader'] {
+          align-self: center;
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 0.75em;
+        }
+
+        div[role='cell'] {
+          display: flex;
+          padding: 0.25em;
+          align-items: center;
+          min-height: 3em;
+          border-left: 1px solid var(--bg-dark);
+        }
+      }
+    }
+  }
+}

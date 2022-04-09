@@ -1,0 +1,15 @@
+{
+  "name": "commons",
+  "version": "1.0.0",
+  "description": "Common code for CP backend and frontend",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.5.2"
+  }
+}
