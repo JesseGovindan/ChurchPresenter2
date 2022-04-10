@@ -5,7 +5,7 @@
   "main": "build/index.js",
   "scripts": {
     "test": "npx ts-mocha ./**/*.spec.ts --recursive src/test --no-parallel --exit",
-    "clean": "mkdir -p build && rm -rf build/* && ln -s ../../frontend/build/ ./build/public",
+    "clean": "npx shx mkdir -p build && npx shx rm -rf build/*",
     "compile": "npm run clean && tsc",
     "serve": "electron build/index.js --onlyApi false",
     "start": "electron-forge start",
@@ -53,6 +53,7 @@
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-react": "^7.28.0",
     "mocha": "^9.2.0",
+    "node-gyp": "^9.0.0",
     "sinon": "^13.0.1",
     "socket.io-client": "^4.4.1",
     "supertest": "^6.2.2",
