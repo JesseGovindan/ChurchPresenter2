@@ -8,6 +8,11 @@
   src: url("./static/fonts/jost.ttf");
 }
 
+@font-face {
+  font-family: heebo;
+  src: url("./static/fonts/Heebo-ExtraBold.ttf");
+}
+
 :root {
   font-size: 16px;
   font-family: sfpro;

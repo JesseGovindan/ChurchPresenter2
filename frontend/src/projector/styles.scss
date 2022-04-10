@@ -1,5 +1,5 @@
 .stream-projector {
-  height: 100vh;
+  height: 100vmin;
   width: 100%;
   background-color: transparent;
   display: grid;
@@ -11,14 +11,14 @@
     background-color: rgba(0, 0, 0, 0.95);
     display: grid;
     grid-template-rows: 1fr auto;
-    padding: 1vh;
-    min-height: 33vh;
+    padding: 0.5vmin;
+    min-height: 30vmin;
 
     .verse {
-      padding-left: 20vh;
-      padding-right: 20vh;
+      padding-left: 10vmin;
+      padding-right: 10vmin;
       place-self: center;
-      font-size: 4vh;
+      font-size: 5vmin;
       text-align: center;
       font-family: jost;
     }
@@ -27,7 +27,7 @@
       align-self: end;
       justify-self: center;
       font-family: jost;
-      font-size: 4vh;
+      font-size: 4vmin;
       font-weight: 600;
     }
   }
@@ -38,12 +38,20 @@
     white-space: pre-line;
     word-wrap: normal;
     text-align: center;
-    font-size: 6vh;
-    font-family: sfpro;
+    font-size: 5vmin;
+    font-family: heebo;
     text-transform: uppercase;
-    -webkit-text-stroke: 0.2vh black;
-    padding-bottom: 10vh;
-    font-weight: 900;
+    padding-bottom: 2vmin;
+    font-weight: 800;
+    text-shadow: 
+      0 0 0.5vmin black,
+      0 0 0.6vmin black,
+      0 0 0.7vmin black,
+      0 0 0.8vmin black,
+      0 0 0.9vmin black,
+      0 0 0.5vmin black,
+      0 0 0.5vmin black,
+      0 0 0.5vmin black;
   }
 }
 
@@ -71,31 +79,31 @@
 }
 
 .overhead-projector {
-  height: 100vh;
+  height: 100vmin;
   width: 100%;
   display: grid;
   opacity: 1;
-  gap: 10vh;
+  gap: 10vmin;
 
   .scripture {
     justify-self: stretch;
     align-self: start;
     display: grid;
     grid-template-rows: 1fr auto;
-    padding: 5vh;
+    padding: 5vmin;
     color: white;
-    grid-gap: 5vh;
+    grid-gap: 5vmin;
     text-shadow: 
-      0 0 0.5vh black,
-      0 0 0.5vh black,
-      0 0 0.5vh black,
-      0 0 0.5vh black;
+      0 0 0.5vmin black,
+      0 0 0.5vmin black,
+      0 0 0.5vmin black,
+      0 0 0.5vmin black;
 
     .verse {
       grid-row: 2;
-      padding-inline: 10vh;
+      padding-inline: 10vmin;
       place-self: center;
-      font-size: 7vh;
+      font-size: 7vmin;
       text-align: center;
       font-family: jost;
     }
@@ -104,7 +112,7 @@
       grid-row: 1;
       place-self: center;
       font-family: jost;
-      font-size: 7vh;
+      font-size: 7vmin;
       font-weight: 600;
     }
   }
@@ -116,18 +124,18 @@
     display: flex;
     flex-direction: column;
     text-align: center;
-    gap: 4vh;
-    font-size: 7vh;
+    gap: 4vmin;
+    font-size: 7vmin;
     font-family: sans-serif;
     font-weight: 900;
     color: hsl(0, 0, 90%);
 
     .active {
       text-shadow: 
-        0 0 0.5vh black,
-        0 0 0.5vh black,
-        0 0 0.5vh black,
-        0 0 0.5vh black;
+        0 0 0.5vmin black,
+        0 0 0.5vmin black,
+        0 0 0.5vmin black,
+        0 0 0.5vmin black;
       color: white;
     }
   }

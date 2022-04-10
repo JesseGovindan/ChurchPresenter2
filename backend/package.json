@@ -8,6 +8,7 @@
     "clean": "npx shx mkdir -p build && npx shx rm -rf build/*",
     "compile": "npm run clean && tsc",
     "serve": "electron build/index.js --onlyApi false",
+    "serve-dev": "electron build/index.js --onlyApi true --serverPort 3001",
     "start": "electron-forge start",
     "start-quick": "electron build/index.js",
     "build": "npm run compile && npm run build:frontend",
