@@ -173,6 +173,12 @@
     color: var(--c-high);
     background-color: var(--c-bg4);
   }
+
+  &[data-highlighted='true'] {
+    cursor: pointer;
+    color: var(--c-fg);
+    background-color: var(--c-bg2);
+  }
 }
 
 /* EXCEPTIONS ------------------------------------------------------------------------------------*/

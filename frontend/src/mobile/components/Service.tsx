@@ -1,13 +1,19 @@
 import classNames from 'classnames';
 import {ServiceItem, ServiceList} from 'commons';
-import {ChangeEvent, useRef} from 'react';
+import {ChangeEvent, useLayoutEffect, useRef} from 'react';
 import {Book, Download, Music, Search} from 'react-feather';
 import {useSelector, useDispatch} from 'react-redux';
 import {State} from '../../store';
 import {selectFolder, importService} from '../../store/serviceManagerSlice';
-import {List} from './List';
 
-export function Service() {
+interface ServiceProps {
+  scrollPosition: number
+  setScrollPosition: (newPosition: number) => void
+  selectedFolderIndex: number
+  setSelectedFolderIndex: (index: number) => void
+}
+
+export function Service(props: ServiceProps) {
   const dispatch = useDispatch();
   const items = useSelector<State, ServiceList>(state => state.serviceManager.currentService);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -17,6 +23,14 @@ export function Service() {
   };
 
   const isOnObs = !!(window as any).obsstudio;
+
+  const listRef = useRef<HTMLOListElement>(null);
+
+  useLayoutEffect(() => {
+    if (listRef.current !== null) {
+      listRef.current.scrollTop = props.scrollPosition;
+    }
+  }, [listRef, props.scrollPosition]);
 
   return (
     <div className='page'>
@@ -37,24 +51,44 @@ export function Service() {
             onChange={handleFileSelected}/>
         </button>
       </div>
-      <List>
-        { items.map((item, index) =>
-          <ServiceListItem
-            key={index}
-            index={index}
-            type={item.type}
-            title={item.title}
-          />)}
-      </List>
+      <ol
+        className='stack | rounded | service-list'
+        ref={listRef}
+        onScroll={e => props.setScrollPosition(e.currentTarget.scrollTop)}
+      >
+        {items.map((item, index) => <ServiceListItem
+          key={index}
+          index={index}
+          onSelected={() => props.setSelectedFolderIndex(index)}
+          selected={index === props.selectedFolderIndex}
+          type={item.type}
+          title={item.title}
+        />)}
+      </ol>
     </div>
   );
 }
 
-function ServiceListItem(props: ServiceItem & { index: number }) {
+interface ServiceListItemProps extends ServiceItem {
+  index: number
+  onSelected: () => void
+  selected: boolean
+}
+
+function ServiceListItem(props: ServiceListItemProps) {
   const dispatch = useDispatch();
 
+  const handleItemSelected = () => {
+    dispatch(selectFolder(props.index));
+    props.onSelected();
+  };
+
   return (
-    <li className='service-item' onClick={() => dispatch(selectFolder(props.index))}>
+    <li
+      className='service-item'
+      data-highlighted={props.selected}
+      onClick={() => handleItemSelected()}
+    >
       {props.type === 'lyric' ? <Music size='16'/> : <Book size='16'/>}
       <p>{props.title}</p>
     </li>

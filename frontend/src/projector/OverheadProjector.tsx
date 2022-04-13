@@ -31,7 +31,6 @@ function LyricSlide(props: {folder: FolderView}) {
   const slides = props.folder.slides;
   const showingIndex = slides.findIndex(s => s.isShown);
   const currentSection = slides[showingIndex].sectionName;
-  console.log('showingIndex:', showingIndex);
 
   let startIndex = showingIndex;
   for (; startIndex > 0; startIndex--) {
@@ -42,7 +41,6 @@ function LyricSlide(props: {folder: FolderView}) {
       break;
     }
   }
-  console.log('startIndex:', startIndex);
 
   let endIndex = showingIndex;
   for (; endIndex < slides.length; endIndex++) {
@@ -52,7 +50,6 @@ function LyricSlide(props: {folder: FolderView}) {
       break;
     }
   }
-  console.log('showingIndex:', showingIndex);
 
   const parts = slides.slice(startIndex, endIndex)
     .map((slide, index) => {
