@@ -18,7 +18,6 @@ const createWsContext = (props: {children: JSX.Element | JSX.Element[] }) => {
     });
 
     ws.on(Data.folder, (folder: FolderView) => {
-      console.log(folder);
       dispatch(folderSelected(folder));
     });
   }, []);

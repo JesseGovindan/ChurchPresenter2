@@ -2,12 +2,17 @@ import express from 'express'
 import http from 'http'
 import path from 'path'
 import socketIoServer from 'socket.io'
-import { Actions, Data, Folder } from 'commons'
-import { parseServiceFromOpenLpService } from './openlp/service_parser'
-import { folderToServiceItem } from './transformers'
-import { FolderView, SlideSpecifier } from 'commons/interfaces'
+import { Data } from 'commons'
+import { allActions, folderToServiceItem, stateToFolderView } from './transformers'
+import { FolderView, ServiceList } from 'commons/interfaces'
 import { State } from './state'
 import _ from 'lodash'
+import { createActionHandler } from './action_handlers'
+
+export interface CpSocket {
+  sendFolder: (folder: FolderView | null) => void
+  sendService: (service: ServiceList) => void
+}
 
 export function createServer(state: State): http.Server {
   const router = createRouter()
@@ -46,64 +51,30 @@ function createWebSocketServer(server: http.Server, state: State) {
     },
   })
   wsServer.on('connection', clientSocket => {
-    clientSocket.emit(Data.serviceList, state.service.map(folderToServiceItem))
-    if (!_.isNil(state.selectedFolderIndex)) {
-      if (!_.isNil(state.shownSlideIndex)) {
-        clientSocket.emit(Data.folder, asFolderView(
-          state.selectedFolderIndex,
-          state.service[state.selectedFolderIndex],
-          state.shownSlideIndex,
-        ))
-      } else {
-        clientSocket.emit(Data.folder, asFolderView(
-          state.selectedFolderIndex,
-          state.service[state.selectedFolderIndex],
-        ))
-      }
-    } else {
-      clientSocket.emit(Data.folder, null)
-    }
-
-    clientSocket.on(Actions.importService, (fileBuffer: Buffer) => {
-      const serviceFile: any[] = JSON.parse(fileBuffer.toString())
-      state.service = parseServiceFromOpenLpService(serviceFile)
-      wsServer.emit(Data.serviceList, state.service.map(folderToServiceItem))
+    const cpClientSocket = createCpSocket(clientSocket)
+    distributeState(cpClientSocket, state)
+    const actionHandlers = createActionHandler({
+      broadcaster: createCpSocket(wsServer),
+      client: cpClientSocket,
+      state,
     })
 
-    clientSocket.on(Actions.selectFolder, (index: number) => {
-      state.selectedFolderIndex = index
-      wsServer.emit(Data.folder, asFolderView(index, state.service[index]))
-    })
-
-    clientSocket.on(Actions.deselectFolder, () => {
-      state.selectedFolderIndex = undefined
-      wsServer.emit(Data.folder, null)
-    })
-
-    clientSocket.on(Actions.showSlide, (slide: SlideSpecifier) => {
-      state.selectedFolderIndex = slide.folderIndex
-      state.shownSlideIndex = slide.slideIndex
-      wsServer.emit(Data.folder, asFolderView(
-        slide.folderIndex, state.service[slide.folderIndex], slide.slideIndex))
-    })
-
-    clientSocket.on(Actions.hideSlide, () => {
-      const folderIndex = state.selectedFolderIndex || 0
-      state.shownSlideIndex = undefined
-      wsServer.emit(Data.folder, asFolderView(folderIndex, state.service[folderIndex]))
-    })
+    allActions().forEach(action => clientSocket.on(action, actionHandlers[action]))
   })
 }
 
-function asFolderView(index: number, folder: Folder, showingSlideIndex?: number): FolderView {
+function createCpSocket(socket: socketIoServer.Server | socketIoServer.Socket): CpSocket {
   return {
-    serviceIndex: index,
-    ...folder,
-    slides: folder.slides.map((slide, index) => { 
-      return {
-        ...slide,
-        isShown: index === showingSlideIndex,
-      }
-    })
+    sendFolder: (folder: FolderView | null) => {
+      socket.emit(Data.folder, folder)
+    },
+    sendService: (service: ServiceList) => {
+      socket.emit(Data.serviceList, service)
+    },
   }
+}
+
+function distributeState(socket: CpSocket, state: State) {
+  socket.sendService(state.service.map(folderToServiceItem))
+  socket.sendFolder(stateToFolderView(state))
 }
