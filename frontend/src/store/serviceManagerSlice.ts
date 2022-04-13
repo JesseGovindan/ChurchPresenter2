@@ -16,12 +16,8 @@ export interface ServiceManagerState {
 }
 
 const initialState: ServiceManagerState = {
-  currentService: [
-    {type: 'lyric', title: 'Who you say I am'},
-    {type: 'scripture', title: '1 Kings 2:3 (NIV)'},
-  ],
+  currentService: [],
   selectedFolder: null,
-  // currentService: [],
 };
 
 export const serviceManagerSlice = createSlice({
