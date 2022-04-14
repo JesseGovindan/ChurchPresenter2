@@ -8,7 +8,7 @@
     "clean": "npx shx mkdir -p build && npx shx rm -rf build/*",
     "compile": "npm run clean && tsc",
     "serve": "electron build/index.js --onlyApi false",
-    "serve-dev": "electron build/index.js --onlyApi true --serverPort 3001",
+    "serve-dev": "npx ts-node ./src/index.ts --onlyApi true --serverPort 3001",
     "start": "electron-forge start",
     "start-quick": "electron build/index.js",
     "build": "npm run compile && npm run build:frontend",
@@ -20,6 +20,7 @@
   "author": "Jesse Govindan",
   "license": "ISC",
   "dependencies": {
+    "@types/unzipper": "^0.10.5",
     "body-parser": "^1.19.2",
     "commons": "file:../commons",
     "electron-squirrel-startup": "^1.0.0",
@@ -30,6 +31,7 @@
     "sequelize": "^6.16.1",
     "socket.io": "^4.4.1",
     "sqlite3": "^5.0.2",
+    "unzipper": "^0.10.11",
     "ws": "^8.5.0"
   },
   "devDependencies": {

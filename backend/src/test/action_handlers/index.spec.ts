@@ -20,7 +20,7 @@ describe(getFileName(__filename), () => {
 
   it('broadcasts updated service when new service is loaded', async () => {
     // Arrange
-    const testFile = fs.readFileSync(path.join(__dirname, '../', 'resources/test.osj'))
+    const testFile = fs.readFileSync(path.join(__dirname, '../', 'resources/test.osz'))
     const handler = {
       broadcaster: createSocketStub(),
       client: createSocketStub(),
@@ -28,7 +28,7 @@ describe(getFileName(__filename), () => {
     }
     const handlers = createActionHandler(handler)
     // Act
-    handlers[Actions.importService](testFile)
+    await handlers[Actions.importService](testFile)
     // Assert
     expect(handler.broadcaster.sendService).to.have.been.calledWith(testService)
     expect(handler.state.service).to.have.length(testService.length)
@@ -62,7 +62,7 @@ describe(getFileName(__filename), () => {
     }
     const handlers = createActionHandler(handler)
     // Act
-    handlers[Actions.selectFolder](1)
+    await handlers[Actions.selectFolder](1)
     // Assert
     expect(handler.broadcaster.sendFolder).to.have.been.calledWith({
       serviceIndex: 1,
@@ -89,7 +89,7 @@ describe(getFileName(__filename), () => {
     }
     const handlers = createActionHandler(handler)
     // Act
-    handlers[Actions.deselectFolder]()
+    await handlers[Actions.deselectFolder]()
     // Assert
     expect(handler.broadcaster.sendFolder).to.have.been.calledWith(null)
   })
@@ -103,7 +103,7 @@ describe(getFileName(__filename), () => {
     }
     const handlers = createActionHandler(handler)
     // Act
-    handlers[Actions.showSlide]({ folderIndex: 1, slideIndex: 1 })
+    await handlers[Actions.showSlide]({ folderIndex: 1, slideIndex: 1 })
     // Assert
     expect(handler.broadcaster.sendFolder).to.have.been.calledWith({
       serviceIndex: 1,
@@ -130,9 +130,9 @@ describe(getFileName(__filename), () => {
     }
     const handlers = createActionHandler(handler)
     // Act
-    handlers[Actions.selectFolder](1)
-    handlers[Actions.showSlide]({ folderIndex: 1, slideIndex: 1 })
-    handlers[Actions.hideSlide]()
+    await handlers[Actions.selectFolder](1)
+    await handlers[Actions.showSlide]({ folderIndex: 1, slideIndex: 1 })
+    await handlers[Actions.hideSlide]()
     // Assert
     expect(handler.broadcaster.sendFolder).to.have.been.calledThrice
     expect(handler.broadcaster.sendFolder.lastCall).to.have.been.calledWith({

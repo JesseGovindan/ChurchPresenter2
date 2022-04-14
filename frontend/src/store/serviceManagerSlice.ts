@@ -96,12 +96,12 @@ export const epics: Epic<any, any, State>[] = [
         }
 
         return from(new Promise<Action>(async resolve => {
-          const fileBuffer = await new Promise<Buffer>(res => {
+          const fileBuffer = await new Promise<ArrayBuffer>(res => {
             const reader = new FileReader();
             reader.onloadend = () => {
-              res(reader.result as Buffer);
+              res(reader.result as ArrayBuffer);
             };
-            reader.readAsBinaryString(action.payload[0]);
+            reader.readAsArrayBuffer(action.payload[0]);
           });
 
           ws.emit('importService', fileBuffer);

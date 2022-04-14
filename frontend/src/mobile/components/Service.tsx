@@ -46,7 +46,7 @@ export function Service(props: ServiceProps) {
           <input
             className='not-included'
             type='file'
-            accept='.osj'
+            accept='.osz'
             ref={fileInput}
             onChange={handleFileSelected}/>
         </button>
