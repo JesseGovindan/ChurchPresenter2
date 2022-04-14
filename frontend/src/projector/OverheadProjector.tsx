@@ -1,7 +1,7 @@
 import {useSelector} from 'react-redux';
 import {FolderView, SlideView} from 'commons';
 import {State} from '../store';
-import classNames from 'classnames';
+import {useEffect, useLayoutEffect, useRef, useState} from 'react';
 
 export function OverheadProjector() {
   const folder = useSelector<State, FolderView | null>(
@@ -52,18 +52,56 @@ function LyricSlide(props: {folder: FolderView}) {
   }
 
   const parts = slides.slice(startIndex, endIndex)
+    .flatMap(slide => slide.text.split('\n').map(line => ({
+      text: line,
+      isShown: false,
+      caption: '',
+    })))
     .map((slide, index) => {
-      return <div className={classNames({active: slide.isShown})} key={index}>{slide.text}</div>;
+      return <div key={index}>{slide.text}</div>;
     });
 
   return <div className='lyric'>{parts}</div>;
 }
 
 function ScriptureSlide(props: {slide: SlideView}) {
+  const [fontSize, setFontSize] = useState(7);
+  const [max, setMax] = useState(7);
+  const d = useRef<HTMLDivElement>(null);
+  const [windowHeight, setWindowHeight] = useState(window.visualViewport.height);
+  const [windowWidth, setWindowWidth] = useState(0);
+
+  useEffect(() => {
+    window.onresize = () => {
+      setWindowHeight(window.visualViewport.height);
+      setWindowWidth(window.visualViewport.width);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    setMax(7);
+  }, [props.slide, windowHeight, windowWidth]);
+
+  useLayoutEffect(() => {
+    const container = d.current;
+    if (container === null) {
+      return;
+    }
+
+    if (container.scrollHeight > windowHeight) {
+      setFontSize(c => c - 0.1);
+      setMax(fontSize - 0.1);
+    } else {
+      setFontSize(c => Math.min(max, c + 0.1));
+    }
+  }, [d, props.slide, fontSize, windowHeight, windowWidth]);
+
   return (
-    <div className='scripture'>
-      <div className='verse'>{props.slide.text}</div>
-      <div className='caption'>{props.slide?.caption}</div>
+    <div ref={d} className='scripture'>
+      <div className='caption' style={{fontSize: `${fontSize - 1}vmin`}}>
+        {props.slide?.caption}
+      </div>
+      <div className='verse' style={{fontSize: `${fontSize}vmin`}}>{props.slide.text}</div>
     </div>
   );
 }

@@ -79,7 +79,7 @@
 }
 
 .overhead-projector {
-  height: 100vmin;
+  height: 100vh;
   width: 100%;
   display: grid;
   opacity: 1;
@@ -90,20 +90,20 @@
     align-self: start;
     display: grid;
     grid-template-rows: 1fr auto;
-    padding: 5vmin;
+    padding: 3vmin;
     color: white;
-    grid-gap: 5vmin;
+    grid-gap: 3vmin;
     text-shadow: 
-      0 0 0.5vmin black,
-      0 0 0.5vmin black,
-      0 0 0.5vmin black,
-      0 0 0.5vmin black;
+      0 0 0.3vmin black,
+      0 0 0.3vmin black,
+      0 0 0.3vmin black,
+      0 0 0.3vmin black;
 
     .verse {
       grid-row: 2;
       padding-inline: 10vmin;
       place-self: center;
-      font-size: 7vmin;
+      font-weight: 600;
       text-align: center;
       font-family: jost;
     }
@@ -112,7 +112,6 @@
       grid-row: 1;
       place-self: center;
       font-family: jost;
-      font-size: 7vmin;
       font-weight: 600;
     }
   }
@@ -128,15 +127,25 @@
     font-size: 7vmin;
     font-family: sans-serif;
     font-weight: 900;
-    color: hsl(0, 0, 90%);
+    color: white;
+    padding: 2vmin;
 
-    .active {
-      text-shadow: 
-        0 0 0.5vmin black,
-        0 0 0.5vmin black,
-        0 0 0.5vmin black,
-        0 0 0.5vmin black;
-      color: white;
-    }
+    text-shadow: 
+      0 0 0.5vmin black,
+      0 0 0.5vmin black;
+  }
+}
+
+@media (max-aspect-ratio: 16/9) {
+  .overhead-projector {
+    background-position-x: center;
+    background-size: auto 100%;
+  }
+}
+
+@media (min-aspect-ratio: 16/9), (aspect-ratio: 16/9) {
+  .overhead-projector {
+    background-size: 100% auto;
+    background-position-x: center;
   }
 }
