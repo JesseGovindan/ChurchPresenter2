@@ -11,7 +11,7 @@
     "serve-dev": "npx ts-node ./src/index.ts --onlyApi true --serverPort 3001",
     "start": "electron-forge start",
     "start-quick": "electron build/index.js",
-    "build": "npm run compile && npm run build:frontend",
+    "build": "npm run compile && npm run build:frontend && npx shx cp -r ../frontend/build ./build/public",
     "build:frontend": "cd ../frontend && npm run build",
     "package": "electron-forge package",
     "make": "electron-forge make"
