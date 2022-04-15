@@ -11,7 +11,8 @@ export function OverheadProjector() {
   const [max, setMax] = useState(1);
   const d = useRef<HTMLDivElement>(null);
   const [windowHeight, setWindowHeight] = useState(window.visualViewport.height);
-  const [windowWidth, setWindowWidth] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.visualViewport.width);
+  console.log(fontScale);
 
   useEffect(() => {
     window.onresize = () => {
@@ -30,7 +31,18 @@ export function OverheadProjector() {
       return;
     }
 
-    if (container.scrollHeight > windowHeight) {
+    const rect = container.scrollHeight - 1;
+    let maxWidth = 0;
+    for (let i = 0; i < container.children.length; i++) {
+      const child = container.children.item(i);
+      if (child) {
+        maxWidth = Math.max(child.getBoundingClientRect().width, maxWidth);
+      }
+    }
+
+    console.log(`window width: ${windowWidth} div width: ${maxWidth}`);
+    console.log(`window height: ${windowHeight} div height: ${rect}`);
+    if (rect > windowHeight || maxWidth > windowWidth) {
       setFontScale(c => c - 0.02);
       setMax(fontScale - 0.02);
     } else {
@@ -83,16 +95,17 @@ function LyricSlide(props: {folder: FolderView, fontScale: number}) {
   }
 
   const verseFontSize = `${(6*props.fontScale).toFixed(2)}vmax`;
+  const gapSize = `${(4 * props.fontScale).toFixed(2)}vmin`;
   console.log(verseFontSize);
 
   const parts = slides.slice(startIndex, endIndex)
     .flatMap(slide => slide.text.split('\n').map(line => ({
-      text: line,
+      text: line.split(' ').join('\u00A0'),
       isShown: false,
       caption: '',
     })))
     .map((slide, index) => {
-      return <div key={index} style={{fontSize: verseFontSize}}>{slide.text}</div>;
+      return <div key={index} style={{fontSize: verseFontSize, gap: gapSize}}>{slide.text}</div>;
     });
 
   return <div className='lyric'>{parts}</div>;

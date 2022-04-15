@@ -26,6 +26,7 @@ module.exports = {
     'no-multiple-empty-lines': ['error', {'max': 1}],
     'arrow-parens': [2, 'as-needed'],
     'indent': ['error', 2],
-    'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 0 }]
+    'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 0 }],
+    'linebreak-style': ['off']
   },
 };
