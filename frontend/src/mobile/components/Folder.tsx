@@ -1,13 +1,17 @@
 import {List} from './List';
-import {FolderView} from 'commons';
+import {FolderView, ServiceList} from 'commons';
 import {Property} from 'csstype';
 import {deselectFolder, hideSlide, showSlide} from '../../store/serviceManagerSlice';
-import {useDispatch} from 'react-redux';
-import {ArrowLeft} from 'react-feather';
+import {useDispatch, useSelector} from 'react-redux';
+import {ArrowLeft, ArrowRight} from 'react-feather';
 import {Dispatch} from 'react';
+import {State} from '../../store';
+import {SlideSpecifier} from 'commons/interfaces';
 
 export function Folder(props: {folder: FolderView}) {
   const dispatch = useDispatch();
+  const service = useSelector<State, ServiceList>(state => state.serviceManager.currentService);
+
 
   return (
     <div className='page'>
@@ -28,8 +32,55 @@ export function Folder(props: {folder: FolderView}) {
             createScriptureList(props.folder, dispatch)
         }
       </List>
+      <ScriptureTraversal
+        folder={props.folder}
+        service={service}
+        showSlide={s => dispatch(showSlide(s))}
+      />
     </div>
   );
+}
+
+interface ScriptureTraversalProps {
+  folder: FolderView
+  service: ServiceList
+  showSlide: (slide: SlideSpecifier) => void
+}
+
+function ScriptureTraversal(props: ScriptureTraversalProps) {
+  const createPreviousTraversalIcon = (position: 'previous' | 'next') => {
+    return position === 'previous' ?
+      <ArrowLeft className='width-2'/> :
+      <div className='width-2'/>;
+  };
+
+  const createNextTraversalIcon = (position: 'previous' | 'next') => {
+    return position === 'next' ?
+      <ArrowRight className='width-2'/> :
+      <div className='width-2'/>;
+  };
+
+  const createScriptureTraversalButton = (index: number, position: 'previous' | 'next') => {
+    if (index >= props.service.length || props.service[index].type !== 'scripture') {
+      return null;
+    }
+    return (
+      <button
+        className='surrounded | rounded | button'
+        onClick={() => props.showSlide({folderIndex: index, slideIndex: 0})}>
+        { createPreviousTraversalIcon(position) }
+        <div className='centered'>{props.service[index].title}</div>
+        { createNextTraversalIcon(position) }
+      </button>
+    );
+  };
+
+  return props.folder.type === 'scripture' ?
+    <div className='stack | with-a-gap'>
+      {createScriptureTraversalButton(props.folder.serviceIndex - 1, 'previous')}
+      {createScriptureTraversalButton(props.folder.serviceIndex + 1, 'next')}
+    </div> :
+    null;
 }
 
 function createLyricList(folder: FolderView, dispatch: Dispatch<any>): JSX.Element[] {
@@ -61,7 +112,7 @@ function createLyricList(folder: FolderView, dispatch: Dispatch<any>): JSX.Eleme
           slideIndex: index,
         }))}
       >
-        <div className='centered | b-right min-w-3'>{slide.sectionName}</div>
+        <div className='centered | b-right min-width-3'>{slide.sectionName}</div>
         <div>{slide.text}</div>
       </li>
     );
@@ -90,7 +141,7 @@ function createScriptureList(folder: FolderView, dispatch: Dispatch<any>): JSX.E
           slideIndex: index,
         }))}
       >
-        <div className='centered | b-right min-w-3'>{slide.sectionName}</div>
+        <div className='centered | b-right min-width-3'>{slide.sectionName}</div>
         <div>{slide.text}</div>
       </li>
     );

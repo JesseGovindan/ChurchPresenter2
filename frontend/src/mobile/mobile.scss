@@ -8,8 +8,8 @@
   --c-fg2: #b2b8ca;
   --c-black: black;
 
-  --btn-size: 32px;
-  --spacing: 0.5em;
+  --btn-size: 2rem;
+  --spacing: 0.5rem;
 }
 
 /* COMPOSITIONS ----------------------------------------------------------------------------------*/
@@ -47,7 +47,6 @@
   border-right: 2px solid var(--c-bg2);
 }
 
-
 /* UTILITIES -------------------------------------------------------------------------------------*/
 .c-fg {
   color: var(--c-fg);
@@ -82,16 +81,16 @@
   white-space: pre-line;
 }
 
-.min-w-1 {
-  min-width: 1rem;
+.width-2 {
+  width: var(--btn-size);
 }
 
-.min-w-2 {
-  min-width: 2rem;
-}
-
-.min-w-3 {
+.min-width-3 {
   min-width: 3rem;
+}
+
+.with-a-gap {
+  gap: var(--spacing);
 }
 
 /* BLOCK -----------------------------------------------------------------------------------------*/
@@ -100,6 +99,7 @@
 }
 
 .button {
+  height: var(--btn-size);
   outline: none;
   border: none;
   background-color: var(--c-bg4);
