@@ -1,7 +1,8 @@
 import { app, BrowserWindow } from 'electron'
-import { Config, getConfig } from './config'
 import http from 'http'
+import path from 'path'
 
+import { Config, getConfig } from './config'
 import { createServer } from './server'
 
 function main() {
@@ -19,7 +20,11 @@ function startBackend(config: Config) {
 function startFrontend(config: Config, server: http.Server) {
   if (!config.onlyApi) {
     app.on('ready', async () => {
-      const window = new BrowserWindow({ width: 400, height: 600 })
+      const window = new BrowserWindow({
+        width: 400,
+        height: 600,
+        icon: path.join(__dirname, 'public/favicon.ico'),
+      })
       window.loadURL(`http://localhost:${config.serverPort}/mobile`)
       window.menuBarVisible = false
     })
