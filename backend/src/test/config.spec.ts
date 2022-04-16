@@ -1,7 +1,8 @@
 import { expect } from 'chai'
 import { getConfig } from '../config'
+import { getFileName } from './get_file_name'
 
-describe('getConfig', () => {
+describe(getFileName(__filename), () => {
   it('parses serverPort from args', () => {
     // Arrange
     const args = ['--serverPort', '2999']
