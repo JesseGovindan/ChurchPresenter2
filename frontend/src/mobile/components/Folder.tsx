@@ -61,7 +61,7 @@ function ScriptureTraversal(props: ScriptureTraversalProps) {
   };
 
   const createScriptureTraversalButton = (index: number, position: 'previous' | 'next') => {
-    if (index >= props.service.length || props.service[index].type !== 'scripture') {
+    if (index >= props.service.length || index < 0 || props.service[index].type !== 'scripture') {
       return null;
     }
     return (
