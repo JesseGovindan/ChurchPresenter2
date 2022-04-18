@@ -1,5 +1,6 @@
 import { Actions, Folder, FolderView, ServiceItem } from 'commons'
 import _ from 'lodash'
+import { Song } from './songs'
 
 import { State } from './state'
 
@@ -51,5 +52,12 @@ export function asFolderView(
         isShown: index === showingSlideIndex,
       }
     })
+  }
+}
+
+export function songToServiceItem(song: Song): ServiceItem {
+  return {
+    type: 'lyric',
+    title: song.title,
   }
 }

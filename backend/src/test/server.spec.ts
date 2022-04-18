@@ -1,18 +1,20 @@
 import http from 'http'
 import chai, { expect } from 'chai'
-import { Actions, Data, Folder, FolderView, Service, ServiceList } from 'commons'
+import { Actions, Data } from 'commons'
 import sinon from 'sinon'
 import sinonChai from 'sinon-chai'
 
 chai.use(sinonChai)
 
 import socketIoClient, { Socket } from 'socket.io-client'
-import { createServer } from '../server'
+import { CpSocket, createServer } from '../server'
 import { getFileName } from './get_file_name'
 import { DefaultEventsMap } from 'socket.io/dist/typed-events'
 import { State } from '../state'
 import * as actionHandlers from '../action_handlers'
-import { allActions, folderToServiceItem } from '../transformers'
+import { allActions } from '../transformers'
+import _ from 'lodash'
+import { SearchResults } from 'commons/interfaces'
 
 describe(getFileName(__filename), () => {
   let server: http.Server
@@ -24,33 +26,10 @@ describe(getFileName(__filename), () => {
   })
 
   afterEach(() => {
-    sandbox.restore()
-  })
-
-  const currentService: Service = [{
-    type: 'lyric',
-    title: 'Who You Say I Am',
-    slides: [{
-      text: 'Text 1',
-      sectionName: 'C',
-    }],
-  }, {
-    type: 'scripture',
-    title: 'Matthew 3:3 (NIV)',
-    slides: [{
-      text: 'Scripture 1',
-      sectionName: '3',
-    }, {
-      text: 'Scripture 2',
-      sectionName: '4',
-    }],
-  }]
-
-
-  afterEach(() => {
     if (server) {
       server.close()
     }
+    sandbox.restore()
   })
 
   async function startServerWithState(state: State) {
@@ -58,146 +37,112 @@ describe(getFileName(__filename), () => {
     await new Promise<void>(res => server.listen(portNumber, res))
   }
 
-  it('emits current service when websocket connects', async () => {
-    // Arrange
-    await startServerWithState({ service: currentService })
-    // Act
-    const wsClient = createWebSocketClient()
-    const message = await waitForNextServiceListMessage(wsClient)
-    // Assert
-    expect(message).to.eql([{
-      type: 'lyric',
-      title: 'Who You Say I Am',
-    }, {
-      type: 'scripture',
-      title: 'Matthew 3:3 (NIV)',
-    }])
-  })
+  describe('when multiple clients connected', () => {
+    let clients: Socket[]
+    let handlerState: actionHandlers.HandlerState
 
-  it('emits null folder when no folder and slide are selected', async () => {
-    // Arrange
-    await startServerWithState({
-      service: currentService,
-      selectedFolderIndex: undefined,
-      shownSlideIndex: undefined,
-    })
-    // Act
-    const wsClient = createWebSocketClient()
-    const folder = await waitForNext<Folder>(wsClient, Data.folder)
-    // Assert
-    expect(folder).to.eql(null)
-  })
+    beforeEach(async () => {
+      await startServerWithState({ service: [] })
 
-  it('emits selected folder when folder selected with no shows slides', async () => {
-    // Arrange
-    await startServerWithState({
-      service: currentService,
-      selectedFolderIndex: 1,
-      shownSlideIndex: undefined,
+      clients = [createWebSocketClient(), createWebSocketClient()] 
+
+      await new Promise<void>(resolve => {
+        let callCount = 0
+        sandbox.stub(actionHandlers, 'createActionHandler')
+          .callsFake(handler => {
+            callCount++
+            if (callCount === clients.length) {
+              resolve()
+              handlerState = handler
+            }
+            return createHandlerStubs()
+          })
+      })
     })
-    const expected: FolderView = {
-      title: 'Matthew 3:3 (NIV)',
-      type: 'scripture',
-      serviceIndex: 1,
-      slides: [{
-        text: 'Scripture 1',
-        sectionName: '3',
-        isShown: false,
-      }, {
-        text: 'Scripture 2',
-        sectionName: '4',
-        isShown: false,
-      }]
+
+    interface Fixture {
+      dataTypeName: string
+      dataType: Data
+      methodName: keyof CpSocket
+      value: any
     }
 
-    // Act
-    const wsClient = createWebSocketClient()
-    const folder = await waitForNext<FolderView>(wsClient, Data.folder)
-    // Assert
-    expect(folder).to.eql(expected)
-  })
+    const fixtures: Fixture[] = [
+      { 
+        dataTypeName: 'SearchResult',
+        dataType: Data.searchResults,
+        value: [
+          { title: 'Song', type: 'lyric' },
+          { title: 'Verse', type: 'scripture' },
+        ],
+        methodName: 'sendSearchResults'
+      },
+      { 
+        dataTypeName: 'Service',
+        dataType: Data.serviceList,
+        value: [
+          { title: 'Song', type: 'lyric' },
+          { title: 'Verse', type: 'scripture' },
+        ],
+        methodName: 'sendService'
+      },
+      {
+        dataTypeName: 'Folder',
+        dataType: Data.folder,
+        value: {
+          type: 'scripture',
+          title: 'Verse',
+          serviceIndex: 1,
+          slides: [],
+        },
+        methodName: 'sendFolder',
+      }
+    ]
 
-  it('emits selected folder with shown slide when slide selected', async () => {
-    // Arrange
-    await startServerWithState({
-      service: currentService,
-      selectedFolderIndex: 1,
-      shownSlideIndex: 1,
-    })
-    const expected: FolderView = {
-      title: 'Matthew 3:3 (NIV)',
-      type: 'scripture',
-      serviceIndex: 1,
-      slides: [{
-        text: 'Scripture 1',
-        sectionName: '3',
-        isShown: false,
-      }, {
-        text: 'Scripture 2',
-        sectionName: '4',
-        isShown: true,
-      }]
+    for (const fixture of fixtures) {
+      it(`creates broadcaster that sends a ${fixture.dataTypeName} to all sockets`, async () => {
+        // Arrange
+        const stubs = clients.map(client => {
+          const stub = sandbox.stub()
+          client.on(fixture.dataType, stub)
+          return stub
+        })
+        // Act
+        handlerState.broadcaster[fixture.methodName](fixture.value)
+        await Promise.all(clients.map(client => {
+          return waitForNext<SearchResults>(client, fixture.dataType)
+        }))
+        // Assert
+        stubs.forEach(stub => expect(stub).to.have.been.calledWith(fixture.value))
+      })
+
+      it(`creates a client that sends a ${fixture.dataTypeName} to only one socket`, async () => {
+        // Arrange
+        const stubs = clients.map(client => {
+          const stub = sandbox.stub()
+          client.on(fixture.dataType, stub)
+          return stub
+        })
+        // Act
+        handlerState.client[fixture.methodName](fixture.value)
+        await waitForNext(clients[1], fixture.dataType)
+        // Assert
+        expect(stubs[1]).to.have.been.calledWith(fixture.value)
+        expect(stubs[0]).not.to.have.been.called
+      })
     }
-
-    // Act
-    const wsClient = createWebSocketClient()
-    const folder = await waitForNext<FolderView>(wsClient, Data.folder)
-    // Assert
-    expect(folder).to.eql(expected)
-  })
-
-  it('emits current service when websocket connects', async () => {
-    // Arrange
-    await startServerWithState({ service: currentService })
-    // Act
-    const wsClient = createWebSocketClient()
-    const message = await waitForNext<ServiceList>(wsClient, Data.serviceList)
-    // Assert
-    expect(message).to.eql([{
-      type: 'lyric',
-      title: 'Who You Say I Am',
-    }, {
-      type: 'scripture',
-      title: 'Matthew 3:3 (NIV)',
-    }])
-  })
-
-  it('invokes createActionHandler with a correct broadcaster', async () => {
-    // Arrange
-    await startServerWithState({ service: currentService })
-    const createActionHandlerStub = sandbox.stub(actionHandlers, 'createActionHandler')
-      .returns(createHandlerStubs())
-
-    const wsClient1 = createWebSocketClient()
-    const wsClient2 = createWebSocketClient()
-    await Promise.all([
-      waitForNext<ServiceList>(wsClient1, Data.serviceList),
-      waitForNext<ServiceList>(wsClient2, Data.serviceList),
-    ])
-    const broadcaster = createActionHandlerStub.getCalls()[1].args[0].broadcaster
-    const stub1 = sandbox.stub()
-    const stub2 = sandbox.stub()
-    wsClient1.on(Data.serviceList, stub1)
-    wsClient2.on(Data.serviceList, stub2)
-    // Act
-    broadcaster.sendService(currentService.map(folderToServiceItem))
-    await waitForNext<ServiceList>(wsClient1, Data.serviceList)
-    await waitForNext<ServiceList>(wsClient2, Data.serviceList)
-    // Assert
-    expect(stub1).to.have.been.called
-    expect(stub2).to.have.been.called
   })
 
   allActions().forEach(action => {
     it(`invokes actionHandler when ${action} action received`, async () => {
       // Arrange
-      await startServerWithState({ service: currentService })
+      await startServerWithState({ service: [] })
       const handlerStubs = createHandlerStubs()
       const called = createPromiseForCall(handlerStubs[action])
       sandbox.stub(actionHandlers, 'createActionHandler')
         .returns(handlerStubs as any as actionHandlers.ActionHandlers)
-      // Act
       const wsClient = createWebSocketClient()
+      // Act
       wsClient.emit(action, 'value')
       await called
       // Assert
@@ -213,18 +158,10 @@ describe(getFileName(__filename), () => {
     return new Promise<T>(resolve => socket.on(dataType, resolve))
   }
 
-  function waitForNextServiceListMessage(socket: Socket<DefaultEventsMap, DefaultEventsMap>) {
-    return waitForNext<ServiceList>(socket, Data.serviceList)
-  }
-
   function createHandlerStubs(): Record<Actions, sinon.SinonStub> {
-    return {
-      importService: sandbox.stub(),
-      selectFolder: sandbox.stub(),
-      deselectFolder: sandbox.stub(),
-      showSlide: sandbox.stub(),
-      hideSlide: sandbox.stub(),
-    }
+    const actions = allActions()
+    const stubs = actions.map(action => sandbox.stub().callsFake(() => console.log(action)))
+    return _.zipObject(actions, stubs) as Record<Actions, sinon.SinonStub>
   }
 
   function createPromiseForCall(stub: sinon.SinonStub): Promise<void> {

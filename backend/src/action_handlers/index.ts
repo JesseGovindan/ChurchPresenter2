@@ -4,7 +4,13 @@ import { SlideSpecifier } from 'commons/interfaces'
 import { parseServiceFromOpenLpService } from '../openlp/service_parser'
 import { CpSocket } from '../server'
 import { State } from '../state'
-import { asFolderView, folderToServiceItem } from '../transformers'
+import { 
+  asFolderView,
+  folderToServiceItem,
+  songToServiceItem,
+  stateToFolderView,
+} from '../transformers'
+import { findSongs } from '../songs'
 
 export type ActionHandlers = Record<Actions, (t?: any) => Promise<void>> 
 
@@ -15,6 +21,9 @@ export interface HandlerState {
 }
 
 export function createActionHandler(handler: HandlerState): ActionHandlers {
+  handler.client.sendService(handler.state.service.map(folderToServiceItem))
+  handler.client.sendFolder(stateToFolderView(handler.state))
+
   return {
     importService: async (zipBuffer: Buffer) => {
       const dir = await Open.buffer(zipBuffer)
@@ -45,6 +54,11 @@ export function createActionHandler(handler: HandlerState): ActionHandlers {
       const folderIndex = handler.state.selectedFolderIndex || 0
       handler.state.shownSlideIndex = undefined
       handler.broadcaster.sendFolder(asFolderView(folderIndex, handler.state.service[folderIndex]))
+    },
+
+    findFolder: async (searchTerm: string) => {
+      const foundSongs = await findSongs(searchTerm)
+      handler.client.sendSearchResults(foundSongs.map(songToServiceItem))
     },
   }
 }

@@ -1,6 +1,7 @@
 export enum Data {
   serviceList = 'serviceList',
   folder = 'folder',
+  searchResults = 'searchResults',
 }
 
 export enum Actions {
@@ -9,4 +10,5 @@ export enum Actions {
   deselectFolder = 'deselectFolder',
   showSlide = 'showSlide',
   hideSlide = 'hideSlide',
+  findFolder = 'findFolder',
 }

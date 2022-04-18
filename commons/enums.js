@@ -5,6 +5,7 @@ var Data;
 (function (Data) {
     Data["serviceList"] = "serviceList";
     Data["folder"] = "folder";
+    Data["searchResults"] = "searchResults";
 })(Data = exports.Data || (exports.Data = {}));
 var Actions;
 (function (Actions) {
@@ -13,4 +14,5 @@ var Actions;
     Actions["deselectFolder"] = "deselectFolder";
     Actions["showSlide"] = "showSlide";
     Actions["hideSlide"] = "hideSlide";
+    Actions["findFolder"] = "findFolder";
 })(Actions = exports.Actions || (exports.Actions = {}));

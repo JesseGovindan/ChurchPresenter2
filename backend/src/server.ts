@@ -4,7 +4,7 @@ import path from 'path'
 import socketIoServer from 'socket.io'
 import { Data } from 'commons'
 import { allActions, folderToServiceItem, stateToFolderView } from './transformers'
-import { FolderView, ServiceList } from 'commons/interfaces'
+import { FolderView, SearchResults, ServiceList } from 'commons/interfaces'
 import { State } from './state'
 import _ from 'lodash'
 import { createActionHandler } from './action_handlers'
@@ -12,6 +12,7 @@ import { createActionHandler } from './action_handlers'
 export interface CpSocket {
   sendFolder: (folder: FolderView | null) => void
   sendService: (service: ServiceList) => void
+  sendSearchResults: (results: SearchResults) => void
 }
 
 export function createServer(state: State): http.Server {
@@ -51,11 +52,9 @@ function createWebSocketServer(server: http.Server, state: State) {
     },
   })
   wsServer.on('connection', clientSocket => {
-    const cpClientSocket = createCpSocket(clientSocket)
-    distributeState(cpClientSocket, state)
     const actionHandlers = createActionHandler({
       broadcaster: createCpSocket(wsServer),
-      client: cpClientSocket,
+      client: createCpSocket(clientSocket),
       state,
     })
 
@@ -71,10 +70,8 @@ function createCpSocket(socket: socketIoServer.Server | socketIoServer.Socket): 
     sendService: (service: ServiceList) => {
       socket.emit(Data.serviceList, service)
     },
+    sendSearchResults: (results: SearchResults) => {
+      socket.emit(Data.searchResults, results)
+    }, 
   }
-}
-
-function distributeState(socket: CpSocket, state: State) {
-  socket.sendService(state.service.map(folderToServiceItem))
-  socket.sendFolder(stateToFolderView(state))
 }

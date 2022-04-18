@@ -33,6 +33,8 @@ export interface ServiceItem {
   title: string
 }
 
+export type SearchResults = ServiceList
+
 export type ItemType = 'lyric' | 'scripture'
 
 export type SelectedFolder = number
