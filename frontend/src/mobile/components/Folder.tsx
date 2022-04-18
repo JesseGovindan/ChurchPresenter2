@@ -1,12 +1,11 @@
 import {List} from './List';
 import {FolderView, ServiceList} from 'commons';
 import {Property} from 'csstype';
-import {deselectFolder, hideSlide, showSlide} from '../../store/serviceManagerSlice';
+import {deselectFolder, hideSlide, selectFolder, showSlide} from '../../store/serviceManagerSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {ArrowLeft, ArrowRight} from 'react-feather';
 import {Dispatch} from 'react';
 import {State} from '../../store';
-import {SlideSpecifier} from 'commons/interfaces';
 
 export function Folder(props: {folder: FolderView}) {
   const dispatch = useDispatch();
@@ -35,7 +34,7 @@ export function Folder(props: {folder: FolderView}) {
       <ScriptureTraversal
         folder={props.folder}
         service={service}
-        showSlide={s => dispatch(showSlide(s))}
+        handleClick={folderIndex => dispatch(selectFolder(folderIndex))}
       />
     </div>
   );
@@ -44,7 +43,7 @@ export function Folder(props: {folder: FolderView}) {
 interface ScriptureTraversalProps {
   folder: FolderView
   service: ServiceList
-  showSlide: (slide: SlideSpecifier) => void
+  handleClick: (folderIndex: number) => void
 }
 
 function ScriptureTraversal(props: ScriptureTraversalProps) {
@@ -67,7 +66,7 @@ function ScriptureTraversal(props: ScriptureTraversalProps) {
     return (
       <button
         className='surrounded | rounded | button'
-        onClick={() => props.showSlide({folderIndex: index, slideIndex: 0})}>
+        onClick={() => props.handleClick(index)}>
         { createPreviousTraversalIcon(position) }
         <div className='centered'>{props.service[index].title}</div>
         { createNextTraversalIcon(position) }

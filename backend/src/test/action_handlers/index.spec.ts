@@ -140,7 +140,7 @@ describe(getFileName(__filename), () => {
       type: 'lyric',
       title: 'Who You Say I Am',
       slides: [{
-        text: 'Text 1',
+        text: 'Verse 1',
         sectionName: 'C',
       }],
     }, {
@@ -203,6 +203,17 @@ describe(getFileName(__filename), () => {
         }],
       })
     })
+
+    it('broadcasts selected folder with no shown slides when a new folder is selected',
+      async () => {
+      // Arrange
+        await actions[Actions.showSlide]({ folderIndex: 0, slideIndex: 0 })
+        // Act
+        await actions[Actions.selectFolder](1)
+        // Assert
+        expect(handler.state.shownSlideIndex).to.eql(undefined)
+        expect(handler.state.selectedFolderIndex).to.eql(1)
+      })
 
     it('broadcasts null when a folder is deselected', async () => {
       // Arrange

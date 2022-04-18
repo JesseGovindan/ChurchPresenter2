@@ -5,7 +5,6 @@ import { parseServiceFromOpenLpService } from '../openlp/service_parser'
 import { CpSocket } from '../server'
 import { State } from '../state'
 import { 
-  asFolderView,
   folderToServiceItem,
   songToServiceItem,
   stateToFolderView,
@@ -35,7 +34,8 @@ export function createActionHandler(handler: HandlerState): ActionHandlers {
 
     selectFolder: async (index: number) => {
       handler.state.selectedFolderIndex = index
-      handler.broadcaster.sendFolder(asFolderView(index, handler.state.service[index]))
+      handler.state.shownSlideIndex = undefined
+      handler.broadcaster.sendFolder(stateToFolderView(handler.state))
     },
 
     deselectFolder: async () => {
@@ -46,14 +46,12 @@ export function createActionHandler(handler: HandlerState): ActionHandlers {
     showSlide: async (slide: SlideSpecifier) => {
       handler.state.selectedFolderIndex = slide.folderIndex
       handler.state.shownSlideIndex = slide.slideIndex
-      handler.broadcaster.sendFolder(asFolderView(
-        slide.folderIndex, handler.state.service[slide.folderIndex], slide.slideIndex))
+      handler.broadcaster.sendFolder(stateToFolderView(handler.state))
     },
 
     hideSlide: async () => {
-      const folderIndex = handler.state.selectedFolderIndex || 0
       handler.state.shownSlideIndex = undefined
-      handler.broadcaster.sendFolder(asFolderView(folderIndex, handler.state.service[folderIndex]))
+      handler.broadcaster.sendFolder(stateToFolderView(handler.state))
     },
 
     findFolder: async (searchTerm: string) => {

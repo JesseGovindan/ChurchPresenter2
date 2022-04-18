@@ -38,7 +38,7 @@ export function stateToFolderView(state: State): FolderView | null {
   }
 }
 
-export function asFolderView(
+function asFolderView(
   index: number,
   folder: Folder,
   showingSlideIndex?: number
