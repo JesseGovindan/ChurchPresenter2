@@ -1,3 +1,5 @@
+import { Song } from '../../songs'
+
 const DEFAULT_LYRICS = `<?xml version='1.0' encoding='UTF-8'?>
 <song version="1.0">
   <lyrics>
@@ -7,16 +9,8 @@ const DEFAULT_LYRICS = `<?xml version='1.0' encoding='UTF-8'?>
   </lyrics>
 </song>`
 
-type Song = {
-  id?: number
-  title: string
-  lyrics: string
-  search_title: string
-  search_lyrics: string
-}
-
 export const songBuilder = () => {
-  const song: Song = {
+  const song: Omit<Song, 'id'> & { id?: number } = {
     title: 'title',
     lyrics: DEFAULT_LYRICS,
     search_title: '',
@@ -30,10 +24,12 @@ export const songBuilder = () => {
     },
     withTitle: (title: string) => {
       song.title = title
+      song.search_title = title.toLowerCase()
       return builder
     },
     withLyrics: (lyrics: string) => {
       song.lyrics = lyrics
+      song.search_lyrics = lyrics.toLowerCase()
       return builder
     },
     build: () => {

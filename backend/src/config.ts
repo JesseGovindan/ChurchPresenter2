@@ -18,7 +18,7 @@ export function getConfig(args: string[]): Config {
   return {
     serverPort: getFieldOrDefault(asNumber, 'serverPort', DEFAULT_SERVER_PORT, fields),
     onlyApi: getFieldOrDefault(asBoolean, 'onlyApi', ONLY_API, fields),
-    dbLocation: '/home/jesse/Documents/cp/backend/openlp/data/songs/songs.sqlite',
+    dbLocation: '/home/jesse/Documents/cp/temp/openlp/data/songs/songs.sqlite',
   }
 }
 

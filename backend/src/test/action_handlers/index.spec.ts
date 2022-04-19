@@ -12,6 +12,9 @@ import { ActionHandlers, createActionHandler } from '../../action_handlers'
 import { CpSocket } from '../../server'
 import * as songs from '../../songs'
 import { State } from '../../state'
+import { songBuilder } from '../builders/song_builder'
+import { getConfig } from '../../config'
+import { initialiseSongsDatabase } from '../../db/sqlite'
 
 describe(getFileName(__filename), () => {
   let sandbox: sinon.SinonSandbox
@@ -281,8 +284,8 @@ describe(getFileName(__filename), () => {
     it('emits found songs when searched for', async () => {
       // Arrange
       sandbox.stub(songs, 'findSongs').resolves([
-        { title: 'Song Title 1' },
-        { title: 'Song Title 2' },
+        songBuilder().withTitle('Song Title 1').build(),
+        songBuilder().withTitle('Song Title 2').build(),
       ])
       // Act
       await actions[Actions.findFolder]('search term')
