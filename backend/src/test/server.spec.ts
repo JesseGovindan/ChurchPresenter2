@@ -39,10 +39,10 @@ describe(getFileName(__filename), () => {
 
   describe('when multiple clients connected', () => {
     let clients: Socket[]
-    let handlerState: actionHandlers.HandlerState
+    let handlerProperties: actionHandlers.HandlerProperties
 
     beforeEach(async () => {
-      await startServerWithState({ service: [] })
+      await startServerWithState({ service: [], folder: {} })
 
       clients = [createWebSocketClient(), createWebSocketClient()] 
 
@@ -53,7 +53,7 @@ describe(getFileName(__filename), () => {
             callCount++
             if (callCount === clients.length) {
               resolve()
-              handlerState = handler
+              handlerProperties = handler
             }
             return createHandlerStubs()
           })
@@ -108,7 +108,7 @@ describe(getFileName(__filename), () => {
           return stub
         })
         // Act
-        handlerState.broadcaster[fixture.methodName](fixture.value)
+        handlerProperties.broadcaster[fixture.methodName](fixture.value)
         await Promise.all(clients.map(client => {
           return waitForNext<SearchResults>(client, fixture.dataType)
         }))
@@ -124,7 +124,7 @@ describe(getFileName(__filename), () => {
           return stub
         })
         // Act
-        handlerState.client[fixture.methodName](fixture.value)
+        handlerProperties.client[fixture.methodName](fixture.value)
         await waitForNext(clients[1], fixture.dataType)
         // Assert
         expect(stubs[1]).to.have.been.calledWith(fixture.value)

@@ -20,17 +20,18 @@ export function folderToServiceItem(folder: Folder): ServiceItem {
 }
 
 export function stateToFolderView(state: State): FolderView | null {
-  if (!_.isNil(state.selectedFolderIndex)) {
-    if (!_.isNil(state.shownSlideIndex)) {
+  const folder = state.folder
+  if (!_.isNil(folder.selectedFolderIndex)) {
+    if (!_.isNil(folder.shownSlideIndex)) {
       return asFolderView(
-        state.selectedFolderIndex,
-        state.service[state.selectedFolderIndex],
-        state.shownSlideIndex,
+        folder.selectedFolderIndex,
+        state.service[folder.selectedFolderIndex],
+        folder.shownSlideIndex,
       )
     } else {
       return asFolderView(
-        state.selectedFolderIndex,
-        state.service[state.selectedFolderIndex],
+        folder.selectedFolderIndex,
+        state.service[folder.selectedFolderIndex],
       )
     }
   } else {

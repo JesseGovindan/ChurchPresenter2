@@ -48,7 +48,7 @@ describe(getFileName(__filename), () => {
       const handler = {
         broadcaster: createSocketStub(),
         client: createSocketStub(),
-        state: { service: testService }
+        state: { service: testService, folder: {} }
       }
       // Act
       createActionHandler(handler)
@@ -64,7 +64,7 @@ describe(getFileName(__filename), () => {
       const handler = {
         broadcaster: createSocketStub(),
         client: createSocketStub(),
-        state: { service: testService }
+        state: { service: testService, folder: {} }
       }
       // Act
       createActionHandler(handler)
@@ -77,7 +77,12 @@ describe(getFileName(__filename), () => {
       const handler = {
         broadcaster: createSocketStub(),
         client: createSocketStub(),
-        state: { service: testService, selectedFolderIndex: 1 }
+        state: {
+          service: testService,
+          folder: {
+            selectedFolderIndex: 1,
+          }
+        }
       }
       // Act
       createActionHandler(handler)
@@ -105,7 +110,13 @@ describe(getFileName(__filename), () => {
       const handler = {
         broadcaster: createSocketStub(),
         client: createSocketStub(),
-        state: { service: testService, selectedFolderIndex: 1, shownSlideIndex: 1 }
+        state: { 
+          service: testService,
+          folder: {
+            selectedFolderIndex: 1,
+            shownSlideIndex: 1,
+          }
+        }
       }
       // Act
       createActionHandler(handler)
@@ -159,7 +170,7 @@ describe(getFileName(__filename), () => {
       handler = {
         broadcaster: createSocketStub(),
         client: createSocketStub(),
-        state: { service: currentService },
+        state: { service: currentService, folder: {} },
       }
       actions = createActionHandler(handler)
 
@@ -211,8 +222,7 @@ describe(getFileName(__filename), () => {
         // Act
         await actions[Actions.selectFolder](1)
         // Assert
-        expect(handler.state.shownSlideIndex).to.eql(undefined)
-        expect(handler.state.selectedFolderIndex).to.eql(1)
+        expect(handler.state.folder).to.eql({ selectedFolderIndex: 1 })
       })
 
     it('broadcasts null when a folder is deselected', async () => {
