@@ -3,10 +3,12 @@ import http from 'http'
 import path from 'path'
 
 import { Config, getConfig } from './config'
+import { initialiseSongsDatabase } from './db/sqlite'
 import { createServer } from './server'
 
 function main() {
   const config = getConfig(process.argv.slice(2))
+  initialiseSongsDatabase(config.songDatabaseLocation)
   console.log('Song Database Location: ', config.songDatabaseLocation)
   const server = startBackend(config)
   startFrontend(config, server)
