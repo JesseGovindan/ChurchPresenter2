@@ -42,7 +42,7 @@ export function createActionHandler(properties: HandlerProperties): ActionHandle
 
     showSlide: async (slide: SlideSpecifier) => {
       changeFolderStateAndBroadcast(properties, {
-        selectedFolderIndex: slide.slideIndex,
+        selectedFolderIndex: slide.folderIndex,
         shownSlideIndex: slide.slideIndex 
       })
     },

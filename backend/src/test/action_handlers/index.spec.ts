@@ -13,8 +13,6 @@ import { CpSocket } from '../../server'
 import * as songs from '../../songs'
 import { State } from '../../state'
 import { songBuilder } from '../builders/song_builder'
-import { getConfig } from '../../config'
-import { initialiseSongsDatabase } from '../../db/sqlite'
 
 describe(getFileName(__filename), () => {
   let sandbox: sinon.SinonSandbox
@@ -167,6 +165,18 @@ describe(getFileName(__filename), () => {
         text: 'Scripture 2',
         sectionName: '4',
       }],
+    }, {
+      title: 'Verse 2',
+      type: 'scripture',
+      slides: [{
+        text: 'I am the Alpha',
+        sectionName: '4',
+        caption: 'Perry 3:3',
+      }, {
+        text: 'And the Omega',
+        sectionName: '5',
+        caption: 'Perry 3:4',
+      }],
     }]
 
     beforeEach(() => {
@@ -223,9 +233,9 @@ describe(getFileName(__filename), () => {
       // Arrange
         await actions[Actions.showSlide]({ folderIndex: 0, slideIndex: 0 })
         // Act
-        await actions[Actions.selectFolder](1)
+        await actions[Actions.selectFolder](2)
         // Assert
-        expect(handler.state.folder).to.eql({ selectedFolderIndex: 1 })
+        expect(handler.state.folder).to.eql({ selectedFolderIndex: 2 })
       })
 
     it('broadcasts null when a folder is deselected', async () => {
@@ -239,19 +249,21 @@ describe(getFileName(__filename), () => {
     it('broadcasts selected folder with shown slide when a slide is shown', async () => {
       // Arrange
       // Act
-      await actions[Actions.showSlide]({ folderIndex: 1, slideIndex: 1 })
+      await actions[Actions.showSlide]({ folderIndex: 2, slideIndex: 1 })
       // Assert
       expect(handler.broadcaster.sendFolder).to.have.been.calledWith({
-        serviceIndex: 1,
+        serviceIndex: 2,
+        title: 'Verse 2',
         type: 'scripture',
-        title: 'Matthew 3:3 (NIV)',
         slides: [{
-          text: 'Scripture 1',
-          sectionName: '3',
+          text: 'I am the Alpha',
+          sectionName: '4',
+          caption: 'Perry 3:3',
           isShown: false,
         }, {
-          text: 'Scripture 2',
-          sectionName: '4',
+          text: 'And the Omega',
+          sectionName: '5',
+          caption: 'Perry 3:4',
           isShown: true,
         }],
       })
@@ -260,11 +272,10 @@ describe(getFileName(__filename), () => {
     it('broadcasts selected folder with no shown slide when a slide is hidden', async () => {
       // Arrange
       // Act
-      await actions[Actions.selectFolder](1)
       await actions[Actions.showSlide]({ folderIndex: 1, slideIndex: 1 })
       await actions[Actions.hideSlide]()
       // Assert
-      expect(handler.broadcaster.sendFolder).to.have.been.calledThrice
+      expect(handler.broadcaster.sendFolder).to.have.been.calledTwice
       expect(handler.broadcaster.sendFolder.lastCall).to.have.been.calledWith({
         serviceIndex: 1,
         type: 'scripture',
