@@ -272,21 +272,23 @@ describe(getFileName(__filename), () => {
     it('broadcasts selected folder with no shown slide when a slide is hidden', async () => {
       // Arrange
       // Act
-      await actions[Actions.showSlide]({ folderIndex: 1, slideIndex: 1 })
+      await actions[Actions.showSlide]({ folderIndex: 2, slideIndex: 1 })
       await actions[Actions.hideSlide]()
       // Assert
       expect(handler.broadcaster.sendFolder).to.have.been.calledTwice
       expect(handler.broadcaster.sendFolder.lastCall).to.have.been.calledWith({
-        serviceIndex: 1,
+        serviceIndex: 2,
+        title: 'Verse 2',
         type: 'scripture',
-        title: 'Matthew 3:3 (NIV)',
         slides: [{
-          text: 'Scripture 1',
-          sectionName: '3',
+          text: 'I am the Alpha',
+          sectionName: '4',
+          caption: 'Perry 3:3',
           isShown: false,
         }, {
-          text: 'Scripture 2',
-          sectionName: '4',
+          text: 'And the Omega',
+          sectionName: '5',
+          caption: 'Perry 3:4',
           isShown: false,
         }],
       })

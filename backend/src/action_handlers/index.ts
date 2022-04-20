@@ -49,7 +49,7 @@ export function createActionHandler(properties: HandlerProperties): ActionHandle
 
     hideSlide: async () => {
       changeFolderStateAndBroadcast(properties, {
-        selectedFolderIndex: properties.state.folder.shownSlideIndex
+        selectedFolderIndex: properties.state.folder.selectedFolderIndex
       })
     },
 
