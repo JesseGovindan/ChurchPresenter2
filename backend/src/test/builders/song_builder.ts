@@ -33,7 +33,7 @@ export const songBuilder = () => {
       return builder
     },
     build: () => {
-      return song
+      return song as Song
     }
   }
   return builder

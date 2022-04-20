@@ -136,7 +136,7 @@ describe(getFileName(__filename), () => {
   allActions().forEach(action => {
     it(`invokes actionHandler when ${action} action received`, async () => {
       // Arrange
-      await startServerWithState({ service: [] })
+      await startServerWithState({ service: [], folder: {} })
       const handlerStubs = createHandlerStubs()
       const called = createPromiseForCall(handlerStubs[action])
       sandbox.stub(actionHandlers, 'createActionHandler')

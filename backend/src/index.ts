@@ -7,12 +7,13 @@ import { createServer } from './server'
 
 function main() {
   const config = getConfig(process.argv.slice(2))
+  console.log('Song Database Location: ', config.songDatabaseLocation)
   const server = startBackend(config)
   startFrontend(config, server)
 }
 
 function startBackend(config: Config) {
-  const server = createServer({ service: [] })
+  const server = createServer({ service: [], folder: {} })
   server.listen(config.serverPort)
   return server
 }
