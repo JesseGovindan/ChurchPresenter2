@@ -2,22 +2,24 @@ import {Action, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {from} from 'rxjs';
 import {createEmptyReducer} from './Epic';
 import {SongReference} from './previewProjectorSlice';
-import {of, switchMap} from 'rxjs';
+import {of, switchMap, debounceTime} from 'rxjs';
 import {Epic, ofType} from 'redux-observable';
 import {State} from '.';
 import {ws} from '../websocket';
 import {Actions, ServiceList, FolderView} from 'commons';
-import {SlideSpecifier} from 'commons/interfaces';
+import {SearchResults, SlideSpecifier} from 'commons/interfaces';
 
 export interface ServiceManagerState {
   currentService: ServiceList
   selectedFolder: FolderView | null
   draggedSong?: SongReference
+  searchResults: SearchResults
 }
 
 const initialState: ServiceManagerState = {
   currentService: [],
   selectedFolder: null,
+  searchResults: [],
 };
 
 export const serviceManagerSlice = createSlice({
@@ -44,11 +46,16 @@ export const serviceManagerSlice = createSlice({
       state.selectedFolder = action.payload;
     },
 
+    searchCompleted: (state, action: PayloadAction<SearchResults>) => {
+      state.searchResults = action.payload;
+    },
+
     importService: createEmptyReducer<ServiceManagerState, FileList>(),
     selectFolder: createEmptyReducer<ServiceManagerState, number>(),
     deselectFolder: createEmptyReducer<ServiceManagerState>(),
     showSlide: createEmptyReducer<ServiceManagerState, SlideSpecifier>(),
     hideSlide: createEmptyReducer<ServiceManagerState>(),
+    findFolder: createEmptyReducer<ServiceManagerState, string>(),
   },
 });
 
@@ -59,12 +66,14 @@ export const {
   songDragCompleted,
   serviceChanged,
   getService,
+  searchCompleted,
   importService,
   selectFolder,
   deselectFolder,
   showSlide,
   hideSlide,
   folderSelected,
+  findFolder,
 } = serviceManagerSlice.actions;
 export const epics: Epic<any, any, State>[] = [
   // songDragCompletedEpic
@@ -134,7 +143,7 @@ export const epics: Epic<any, any, State>[] = [
     );
   },
 
-  // showSlide
+  // showSlideEpic
   action$ => {
     return action$.pipe(
       ofType(showSlide.type),
@@ -145,12 +154,24 @@ export const epics: Epic<any, any, State>[] = [
     );
   },
 
-  // hideSlide
+  // hideSlideEpic
   action$ => {
     return action$.pipe(
       ofType(hideSlide.type),
       switchMap(() => {
         ws.emit(Actions.hideSlide);
+        return of({type: 'empty'});
+      }),
+    );
+  },
+
+  // findFolderEpic
+  action$ => {
+    return action$.pipe(
+      ofType(findFolder.type),
+      debounceTime(500),
+      switchMap(action => {
+        ws.emit(Actions.findFolder, action.payload);
         return of({type: 'empty'});
       }),
     );

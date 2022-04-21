@@ -1,12 +1,15 @@
 import classNames from 'classnames';
 import {ServiceItem, ServiceList} from 'commons';
 import {ChangeEvent, useLayoutEffect, useRef} from 'react';
-import {Book, Download, Music, Search} from 'react-feather';
+import {Download, Search} from 'react-feather';
 import {useSelector, useDispatch} from 'react-redux';
-import {State} from '../../store';
-import {selectFolder, importService} from '../../store/serviceManagerSlice';
+import {State} from '../store';
+import {selectFolder, importService} from '../store/serviceManagerSlice';
+import {List} from './List';
+import {FolderIcon} from './FolderIcon';
 
 interface ServiceProps {
+  showSearch: () => void
   scrollPosition: number
   setScrollPosition: (newPosition: number) => void
   selectedFolderIndex: number
@@ -14,15 +17,7 @@ interface ServiceProps {
 }
 
 export function Service(props: ServiceProps) {
-  const dispatch = useDispatch();
   const items = useSelector<State, ServiceList>(state => state.serviceManager.currentService);
-  const fileInput = useRef<HTMLInputElement>(null);
-
-  const handleFileSelected = (e: ChangeEvent<HTMLInputElement>) => {
-    dispatch(importService(e.target.files as FileList));
-  };
-
-  const isOnObs = !!(window as any).obsstudio;
 
   const listRef = useRef<HTMLOListElement>(null);
 
@@ -33,29 +28,9 @@ export function Service(props: ServiceProps) {
   }, [listRef, props.scrollPosition]);
 
   return (
-    <div className='page'>
-      <div className='surrounded'>
-        <button className='centered | squared rounded hidden | button'><Search/></button>
-        <h1 className='centered | c-fg | title'>Service</h1>
-
-        <button
-          className={classNames('centered | squared rounded | button', {hidden: isOnObs})}
-          onClick={() => fileInput.current?.click() }
-        >
-          <Download/>
-          <input
-            className='not-included'
-            type='file'
-            accept='.osz'
-            ref={fileInput}
-            onChange={handleFileSelected}/>
-        </button>
-      </div>
-      <ol
-        className='stack | rounded | service-list'
-        ref={listRef}
-        onScroll={e => props.setScrollPosition(e.currentTarget.scrollTop)}
-      >
+    <div className='service'>
+      <ServiceHeader showSearch={props.showSearch}/>
+      <List ref={listRef} onScroll={e => props.setScrollPosition(e.currentTarget.scrollTop)}>
         {items.map((item, index) => <ServiceListItem
           key={index}
           index={index}
@@ -64,9 +39,38 @@ export function Service(props: ServiceProps) {
           type={item.type}
           title={item.title}
         />)}
-      </ol>
+      </List>
     </div>
   );
+}
+
+function ServiceHeader(props: {showSearch: () => void}) {
+  const dispatch = useDispatch();
+  const fileInput = useRef<HTMLInputElement>(null);
+
+  const handleFileSelected = (e: ChangeEvent<HTMLInputElement>) => {
+    dispatch(importService(e.target.files as FileList));
+  };
+
+  const canUpload = !(window as any).obsstudio;
+
+  return <div className='service__header'>
+    <button
+      className='icon-button'
+      onClick={props.showSearch}
+    >
+      <Search/>
+    </button>
+    <h1>Service</h1>
+
+    <button
+      className={classNames('icon-button', {'icon-button--hidden': !canUpload})}
+      onClick={() => fileInput.current?.click() }
+    >
+      <Download/>
+      <input type='file' accept='.osz' ref={fileInput} onChange={handleFileSelected}/>
+    </button>
+  </div>;
 }
 
 interface ServiceListItemProps extends ServiceItem {
@@ -85,11 +89,11 @@ function ServiceListItem(props: ServiceListItemProps) {
 
   return (
     <li
-      className='service-item'
+      className='list-item'
       data-highlighted={props.selected}
       onClick={() => handleItemSelected()}
     >
-      {props.type === 'lyric' ? <Music size='16'/> : <Book size='16'/>}
+      <FolderIcon type={props.type}/>
       <p>{props.title}</p>
     </li>
   );

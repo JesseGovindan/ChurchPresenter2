@@ -1,0 +1,260 @@
+:root {
+  --c-bg: #23242A;
+  --c-bg2: #424650;
+  --c-bg3: #2a2d35;
+  --c-bg4: #3a3e54;
+  --c-high: #7f7cff;
+  --c-fg: #e2e3e3;
+  --c-fg2: #b2b8ca;
+  --c-black: black;
+
+  --size-1: 0.5rem;
+  --size-2: 1rem;
+  --size-3: 2rem;
+  --size-4: 3rem;
+}
+
+/* COMPOSITIONS ----------------------------------------------------------------------------------*/
+@mixin page {
+  display: grid;
+  grid-template-rows: auto 1fr;
+
+  height: 100vh;
+  @include padded(1);
+  @include gapped(1);
+
+  background-color: var(--c-bg);
+}
+
+@mixin centered {
+  display: grid;
+  place-items: center;
+}
+
+@mixin surrounded {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+}
+
+@mixin row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+/* UTILITIES -------------------------------------------------------------------------------------*/
+@mixin height($level) {
+  height: var(--size- + $level);
+}
+
+@mixin width($level) {
+  width: var(--size- + $level);
+}
+
+@mixin min-width($level) {
+  width: var(--size- + $level);
+}
+
+@mixin squared($level) {
+  @include width($level);
+  @include height($level);
+}
+
+@mixin gapped($level) {
+  gap: var(--size- + $level);
+}
+
+@mixin rounded($level) {
+  border-radius: var(--size- + $level);
+}
+
+@mixin padded($level) {
+  padding: var(--size- + $level);
+}
+
+@mixin padded-inline($level) {
+  padding-inline: var(--size- + $level);
+}
+
+@mixin padded-block($level) {
+  padding-block: var(--size- + $level);
+}
+
+@mixin border-less {
+  border: none;
+}
+
+@mixin interactive {
+  @include border-less;
+  background-color: var(--c-bg4);
+  color: var(--c-high);
+
+  &:hover,
+  &:focus {
+    cursor: pointer;
+    outline: 2px solid var(--c-high);
+  }
+}
+
+@mixin selectable {
+  &:hover {
+    cursor: pointer;
+    color: var(--c-fg);
+    background-color: var(--c-bg2);
+  }
+
+  &:active {
+    color: var(--c-high);
+    background-color: var(--c-bg4);
+  }
+}
+
+/* BLOCK -----------------------------------------------------------------------------------------*/
+.list {
+  display: flex;
+  flex-direction: column;
+
+  @include rounded(1);
+
+  background-color: var(--c-bg3);
+  overflow-y: auto;
+  border: 2px solid var(--c-bg2);
+
+  & > * {
+    border-bottom: 2px solid var(--c-bg2);
+  }
+}
+
+.list-item {
+  color: var(--c-fg2);
+  @include selectable;
+
+  @include surrounded;
+  @include gapped(1);
+  @include padded(1);
+
+  & > svg {
+    @include squared(2);
+  }
+}
+
+.icon-button {
+  @include centered;
+
+  @include rounded(1);
+  @include height(3);
+  @include width(3);
+
+  @include interactive;
+
+  &--hidden {
+    display: none;
+  }
+}
+
+h1 {
+  font-size: 1.5em;
+  color: var(--c-fg);
+  text-align: center;
+}
+
+.search {
+  @include page;
+
+  &__input {
+    @include height(3);
+    outline: none;
+  }
+
+  &__header {
+    @include gapped(1);
+    @include row;
+  }
+
+  &__input {
+    @include padded(1);
+    @include rounded(1);
+
+    min-width: 0;
+
+    @include interactive;
+  }
+}
+
+.service {
+  @include page;
+
+  &__header {
+    @include gapped(1);
+    @include surrounded;
+  }
+
+  input {
+    display: none;
+  }
+}
+
+.folder {
+  @include page;
+
+  & > &__header {
+    @include gapped(1);
+    @include surrounded;
+
+    & > .hidden {
+      @include width(3);
+      opacity: 0;
+    }
+  }
+
+  &__item {
+    @include row;
+    color: var(--c-fg2);
+    @include selectable;
+
+    &[data-active='true'] {
+      color: var(--c-fg);
+      background-color: var(--c-bg4);
+    }
+
+    & > * {
+      @include padded(1);
+    }
+
+    & > *:first-child {
+      @include min-width(4);
+      @include centered;
+      height: 100%;
+      border-right: solid 2px var(--c-bg2);
+    }
+
+    &--lyric {
+      & > * {
+        color: black;
+      }
+    }
+  }
+
+  &__traverse {
+    display: flex;
+    flex-direction: column;
+    @include gapped(1);
+
+    & > &__button {
+      @include surrounded;
+      @include rounded(1);
+      @include height(3);
+      @include padded-inline(1);
+      @include interactive;
+
+      & > svg {
+        @include squared(2);
+      }
+      & > .spacer {
+        @include squared(2);
+        opacity: 0;
+      }
+    }
+  }
+}

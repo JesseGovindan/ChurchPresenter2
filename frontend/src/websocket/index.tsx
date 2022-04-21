@@ -3,7 +3,7 @@ import {createContext, useEffect} from 'react';
 import {useDispatch} from 'react-redux';
 import io from 'socket.io-client';
 import {domain} from '../store/config';
-import {folderSelected, serviceChanged} from '../store/serviceManagerSlice';
+import {folderSelected, searchCompleted, serviceChanged} from '../store/serviceManagerSlice';
 
 const ws = io(domain);
 
@@ -19,6 +19,10 @@ const createWsContext = (props: {children: JSX.Element | JSX.Element[] }) => {
 
     ws.on(Data.folder, (folder: FolderView) => {
       dispatch(folderSelected(folder));
+    });
+
+    ws.on(Data.searchResults, searchResults => {
+      dispatch(searchCompleted(searchResults));
     });
   }, []);
 
