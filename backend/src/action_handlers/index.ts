@@ -4,12 +4,7 @@ import { SlideSpecifier } from 'commons/interfaces'
 import { parseServiceFromOpenLpService } from '../openlp/service_parser'
 import { CpSocket } from '../server'
 import { State, FolderState } from '../state'
-import { 
-  folderToServiceItem,
-  songToSearchResult,
-  songToServiceItem,
-  stateToFolderView,
-} from '../transformers'
+import { folderToServiceItem, songToSearchResult, stateToFolderView } from '../transformers'
 import { findSongs, getSongWithId } from '../songs'
 import { parseLyrics } from '../helpers/parse_lyrics'
 
