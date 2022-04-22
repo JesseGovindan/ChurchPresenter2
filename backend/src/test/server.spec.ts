@@ -48,7 +48,7 @@ describe(getFileName(__filename), () => {
 
       await new Promise<void>(resolve => {
         let callCount = 0
-        sandbox.stub(actionHandlers, 'createActionHandler')
+        sandbox.stub(actionHandlers, 'initialiseActionHandlers')
           .callsFake(handler => {
             callCount++
             if (callCount === clients.length) {
@@ -139,7 +139,7 @@ describe(getFileName(__filename), () => {
       await startServerWithState({ service: [], folder: {} })
       const handlerStubs = createHandlerStubs()
       const called = createPromiseForCall(handlerStubs[action])
-      sandbox.stub(actionHandlers, 'createActionHandler')
+      sandbox.stub(actionHandlers, 'initialiseActionHandlers')
         .returns(handlerStubs as any as actionHandlers.ActionHandlers)
       const wsClient = createWebSocketClient()
       // Act

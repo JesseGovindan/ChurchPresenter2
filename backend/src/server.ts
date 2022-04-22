@@ -7,7 +7,7 @@ import { allActions } from './transformers'
 import { FolderView, SearchResults, ServiceList } from 'commons/interfaces'
 import { State } from './state'
 import _ from 'lodash'
-import { createActionHandler } from './action_handlers'
+import { initialiseActionHandlers } from './action_handlers'
 
 export interface CpSocket {
   sendFolder: (folder: FolderView | null) => void
@@ -52,7 +52,7 @@ function createWebSocketServer(server: http.Server, state: State) {
     },
   })
   wsServer.on('connection', clientSocket => {
-    const actionHandlers = createActionHandler({
+    const actionHandlers = initialiseActionHandlers({
       broadcaster: createCpSocket(wsServer),
       client: createCpSocket(clientSocket),
       state,

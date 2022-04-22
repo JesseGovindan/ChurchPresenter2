@@ -8,7 +8,7 @@ chai.use(sinonChai)
 import { Actions, Service } from 'commons'
 import { getFileName } from '../get_file_name'
 import { testService } from '../resources/test_service'
-import { ActionHandlers, createActionHandler } from '../../action_handlers'
+import { ActionHandlers, initialiseActionHandlers } from '../../action_handlers'
 import { CpSocket } from '../../server'
 import * as songs from '../../songs'
 import { State } from '../../state'
@@ -52,7 +52,7 @@ describe(getFileName(__filename), () => {
         state: { service: testService, folder: {} }
       }
       // Act
-      createActionHandler(handler)
+      initialiseActionHandlers(handler)
       // Assert
       expect(handler.client.sendService).to.have.been.calledOnceWith([
         { title: 'Song', type: 'lyric' },
@@ -68,7 +68,7 @@ describe(getFileName(__filename), () => {
         state: { service: testService, folder: {} }
       }
       // Act
-      createActionHandler(handler)
+      initialiseActionHandlers(handler)
       // Assert
       expect(handler.client.sendFolder).to.have.been.calledOnceWith(null)
     })
@@ -86,7 +86,7 @@ describe(getFileName(__filename), () => {
         }
       }
       // Act
-      createActionHandler(handler)
+      initialiseActionHandlers(handler)
       // Assert
       expect(handler.client.sendFolder).to.have.been.calledOnceWith({
         serviceIndex: 1,
@@ -120,7 +120,7 @@ describe(getFileName(__filename), () => {
         }
       }
       // Act
-      createActionHandler(handler)
+      initialiseActionHandlers(handler)
       // Assert
       expect(handler.client.sendFolder).to.have.been.calledOnceWith({
         serviceIndex: 1,
@@ -142,7 +142,7 @@ describe(getFileName(__filename), () => {
   })
 
   describe('after created', () => {
-    let actions: ActionHandlers
+    let actionHandlers: ActionHandlers
     let handler: {
       state: State,
       broadcaster: sinon.SinonStubbedInstance<CpSocket>,
@@ -185,7 +185,7 @@ describe(getFileName(__filename), () => {
         client: createSocketStub(),
         state: { service: currentService, folder: {} },
       }
-      actions = createActionHandler(handler)
+      actionHandlers = initialiseActionHandlers(handler)
 
       const resetStubSocket = (stub: sinon.SinonStubbedInstance<CpSocket>) => {
         stub.sendService.reset()
@@ -201,7 +201,7 @@ describe(getFileName(__filename), () => {
       // Arrange
       const testFile = fs.readFileSync(path.join(__dirname, '../', 'resources/test.osz'))
       // Act
-      await actions[Actions.importService](testFile)
+      await actionHandlers[Actions.importService](testFile)
       // Assert
       expect(handler.broadcaster.sendService).to.have.been.calledWith(testService)
       expect(handler.state.service).to.have.length(testService.length)
@@ -210,7 +210,7 @@ describe(getFileName(__filename), () => {
     it('broadcasts selected folder when a folder is selected', async () => {
       // Arrange
       // Act
-      await actions[Actions.selectFolder](1)
+      await actionHandlers[Actions.selectFolder](1)
       // Assert
       expect(handler.broadcaster.sendFolder).to.have.been.calledWith({
         serviceIndex: 1,
@@ -231,9 +231,9 @@ describe(getFileName(__filename), () => {
     it('broadcasts selected folder with no shown slides when a new folder is selected',
       async () => {
       // Arrange
-        await actions[Actions.showSlide]({ folderIndex: 0, slideIndex: 0 })
+        await actionHandlers[Actions.showSlide]({ folderIndex: 0, slideIndex: 0 })
         // Act
-        await actions[Actions.selectFolder](2)
+        await actionHandlers[Actions.selectFolder](2)
         // Assert
         expect(handler.state.folder).to.eql({ selectedFolderIndex: 2 })
       })
@@ -241,7 +241,7 @@ describe(getFileName(__filename), () => {
     it('broadcasts null when a folder is deselected', async () => {
       // Arrange
       // Act
-      await actions[Actions.deselectFolder]()
+      await actionHandlers[Actions.deselectFolder]()
       // Assert
       expect(handler.broadcaster.sendFolder).to.have.been.calledWith(null)
     })
@@ -249,7 +249,7 @@ describe(getFileName(__filename), () => {
     it('broadcasts selected folder with shown slide when a slide is shown', async () => {
       // Arrange
       // Act
-      await actions[Actions.showSlide]({ folderIndex: 2, slideIndex: 1 })
+      await actionHandlers[Actions.showSlide]({ folderIndex: 2, slideIndex: 1 })
       // Assert
       expect(handler.broadcaster.sendFolder).to.have.been.calledWith({
         serviceIndex: 2,
@@ -272,8 +272,8 @@ describe(getFileName(__filename), () => {
     it('broadcasts selected folder with no shown slide when a slide is hidden', async () => {
       // Arrange
       // Act
-      await actions[Actions.showSlide]({ folderIndex: 2, slideIndex: 1 })
-      await actions[Actions.hideSlide]()
+      await actionHandlers[Actions.showSlide]({ folderIndex: 2, slideIndex: 1 })
+      await actionHandlers[Actions.hideSlide]()
       // Assert
       expect(handler.broadcaster.sendFolder).to.have.been.calledTwice
       expect(handler.broadcaster.sendFolder.lastCall).to.have.been.calledWith({
@@ -301,7 +301,7 @@ describe(getFileName(__filename), () => {
         songBuilder().withTitle('Song Title 2').withId(4).build(),
       ])
       // Act
-      await actions[Actions.findFolder]('search term')
+      await actionHandlers[Actions.findFolder]('search term')
       // Assert
       expect(handler.client.sendSearchResults).to.have.been.calledOnceWith([{
         id: 2,
@@ -318,7 +318,7 @@ describe(getFileName(__filename), () => {
       // Arrange
       const findSongsStub = sandbox.stub(songs, 'findSongs').resolves([])
       // Act
-      await actions[Actions.findFolder]('search term')
+      await actionHandlers[Actions.findFolder]('search term')
       // Assert
       expect(findSongsStub).to.have.been.calledOnceWith('search term')
     })
@@ -337,7 +337,7 @@ describe(getFileName(__filename), () => {
         }]).build(),
       )
       // Act
-      await actions[Actions.addSongToService](23)
+      await actionHandlers[Actions.addSongToService](23)
       // Assert
       expect(handler.broadcaster.sendService).to.have.been.calledWith([{
         type: 'lyric',

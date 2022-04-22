@@ -16,7 +16,7 @@ export interface HandlerProperties {
   state: State
 }
 
-export function createActionHandler(properties: HandlerProperties): ActionHandlers {
+export function initialiseActionHandlers(properties: HandlerProperties): ActionHandlers {
   properties.client.sendService(properties.state.service.map(folderToServiceItem))
   properties.client.sendFolder(stateToFolderView(properties.state))
 
