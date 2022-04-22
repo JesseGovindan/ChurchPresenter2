@@ -1,4 +1,5 @@
 import { Actions, Folder, FolderView, ServiceItem } from 'commons'
+import { SearchResult } from 'commons/interfaces'
 import _ from 'lodash'
 import { Song } from './songs'
 
@@ -56,8 +57,9 @@ function asFolderView(
   }
 }
 
-export function songToServiceItem(song: Song): ServiceItem {
+export function songToSearchResult(song: Song): SearchResult {
   return {
+    id: song.id,
     type: 'lyric',
     title: song.title,
   }

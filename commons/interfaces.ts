@@ -33,7 +33,9 @@ export interface ServiceItem {
   title: string
 }
 
-export type SearchResults = ServiceList
+export type SearchResult = ServiceItem & { id: number }
+
+export type SearchResults = SearchResult[]
 
 export type ItemType = 'lyric' | 'scripture'
 

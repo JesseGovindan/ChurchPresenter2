@@ -297,16 +297,18 @@ describe(getFileName(__filename), () => {
     it('emits found songs when searched for', async () => {
       // Arrange
       sandbox.stub(songs, 'findSongs').resolves([
-        songBuilder().withTitle('Song Title 1').build(),
-        songBuilder().withTitle('Song Title 2').build(),
+        songBuilder().withTitle('Song Title 1').withId(2).build(),
+        songBuilder().withTitle('Song Title 2').withId(4).build(),
       ])
       // Act
       await actions[Actions.findFolder]('search term')
       // Assert
       expect(handler.client.sendSearchResults).to.have.been.calledOnceWith([{
+        id: 2,
         type: 'lyric',
         title: 'Song Title 1',
       }, {
+        id: 4,
         type: 'lyric',
         title: 'Song Title 2',
       }])

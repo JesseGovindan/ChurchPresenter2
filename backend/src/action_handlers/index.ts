@@ -6,6 +6,7 @@ import { CpSocket } from '../server'
 import { State, FolderState } from '../state'
 import { 
   folderToServiceItem,
+  songToSearchResult,
   songToServiceItem,
   stateToFolderView,
 } from '../transformers'
@@ -56,11 +57,15 @@ export function createActionHandler(properties: HandlerProperties): ActionHandle
 
     findFolder: async (searchTerm: string) => {
       const foundSongs = await findSongs(searchTerm)
-      properties.client.sendSearchResults(foundSongs.map(songToServiceItem))
+      properties.client.sendSearchResults(foundSongs.map(songToSearchResult))
     },
 
     addSongToService: async (songId: number) => {
       const songToAdd = await getSongWithId(songId)
+      if (songToAdd === null) {
+        return
+      }
+
       const slides = parseLyrics(songToAdd.lyrics)
       properties.state.service.push({ type: 'lyric', title: songToAdd.title , slides })
       properties.broadcaster.sendService(properties.state.service.map(folderToServiceItem))

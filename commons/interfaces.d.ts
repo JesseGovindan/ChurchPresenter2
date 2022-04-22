@@ -26,7 +26,10 @@ export interface ServiceItem {
     type: ItemType;
     title: string;
 }
-export declare type SearchResults = ServiceList;
+export declare type SearchResult = ServiceItem & {
+    id: number;
+};
+export declare type SearchResults = SearchResult[];
 export declare type ItemType = 'lyric' | 'scripture';
 export declare type SelectedFolder = number;
 export interface SlideSpecifier {
