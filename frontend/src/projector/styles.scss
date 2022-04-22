@@ -8,6 +8,7 @@
   .scripture {
     justify-self: stretch;
     align-self: end;
+    color: white;
     background-color: rgba(0, 0, 0, 0.95);
     display: grid;
     grid-template-rows: 1fr auto;
@@ -36,6 +37,7 @@
     justify-self: center;
     align-self: end;
     white-space: pre-line;
+    color: white;
     word-wrap: normal;
     text-align: center;
     font-size: 5vmin;
