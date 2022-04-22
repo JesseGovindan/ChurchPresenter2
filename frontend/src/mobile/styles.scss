@@ -232,6 +232,7 @@ h1 {
     &--lyric {
       & > * {
         color: black;
+        white-space: pre-line;
       }
     }
   }
