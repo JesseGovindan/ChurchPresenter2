@@ -1,11 +1,10 @@
-import {List} from './List';
 import {FolderView, ServiceList} from 'commons';
-import {Property} from 'csstype';
-import {deselectFolder, hideSlide, selectFolder, showSlide} from '../store/serviceManagerSlice';
+import {deselectFolder, selectFolder} from '../store/serviceManagerSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {ArrowLeft, ArrowRight} from 'react-feather';
-import {Dispatch} from 'react';
 import {State} from '../store';
+import {LyricList} from './LyricList';
+import {ScriptureList} from './ScriptureList';
 
 export function Folder(props: {folder: FolderView}) {
   const dispatch = useDispatch();
@@ -20,13 +19,11 @@ export function Folder(props: {folder: FolderView}) {
         <h1>{props.folder.title}</h1>
         <div className='hidden'/>
       </div>
-      <List>
-        {
-          props.folder.type === 'lyric' ?
-            createLyricList(props.folder, dispatch) :
-            createScriptureList(props.folder, dispatch)
-        }
-      </List>
+      {
+        props.folder.type === 'lyric' ?
+          <LyricList folder={props.folder}/> :
+          <ScriptureList folder={props.folder}/>
+      }
       <ScriptureTraversal
         folder={props.folder}
         service={service}
@@ -34,70 +31,6 @@ export function Folder(props: {folder: FolderView}) {
       />
     </div>
   );
-}
-
-function createLyricList(folder: FolderView, dispatch: Dispatch<any>): JSX.Element[] {
-  const uniqueSongHeadings = getUnique(folder.slides.map(_ => _.sectionName) || []);
-
-  const getColorForHeading = (heading: string): Property.BackgroundColor => {
-    const index = uniqueSongHeadings.get(heading) || 0;
-    return `hsl(${index * 360 / uniqueSongHeadings.size}, 37%, 65%)`;
-  };
-
-  const getDarkColorForHeading = (heading: string): Property.BackgroundColor => {
-    const index = uniqueSongHeadings.get(heading) || 0;
-    return `hsl(${index * 360 / uniqueSongHeadings.size}, 37%, 25%)`;
-  };
-
-  return folder.slides.map((slide, index) => {
-    const color = slide.isShown ?
-      getDarkColorForHeading(slide.sectionName) :
-      getColorForHeading(slide.sectionName);
-
-    return (
-      <li
-        key={`${index}${slide.sectionName}`}
-        className='folder__item folder__item--lyric'
-        style={({backgroundColor: color})}
-        onClick={() => dispatch(slide.isShown ? hideSlide() : showSlide({
-          folderIndex: folder.serviceIndex,
-          slideIndex: index,
-        }))}
-      >
-        <div className='centered | b-right min-width-3'>{slide.sectionName}</div>
-        <div>{slide.text}</div>
-      </li>
-    );
-  });
-}
-
-const getUnique = (values: string[]) => {
-  const map = new Map<string, number>();
-  values.forEach(value => {
-    if (!map.has(value)) {
-      map.set(value, map.size);
-    }
-  });
-  return map;
-};
-
-function createScriptureList(folder: FolderView, dispatch: Dispatch<any>): JSX.Element[] {
-  return folder.slides.map((slide, index) => {
-    return (
-      <li
-        key={`${index}${slide.sectionName}`}
-        className='folder__item'
-        data-active={slide.isShown}
-        onClick={() => dispatch(slide.isShown ? hideSlide() : showSlide({
-          folderIndex: folder.serviceIndex,
-          slideIndex: index,
-        }))}
-      >
-        <div className='centered | b-right min-width-3'>{slide.sectionName}</div>
-        <div>{slide.text}</div>
-      </li>
-    );
-  });
 }
 
 interface ScriptureTraversalProps {

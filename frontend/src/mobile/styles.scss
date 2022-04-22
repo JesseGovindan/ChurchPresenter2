@@ -230,10 +230,8 @@ h1 {
     }
 
     &--lyric {
-      & > * {
-        color: black;
-        white-space: pre-line;
-      }
+      color: black;
+      white-space: pre-line;
     }
   }
 
