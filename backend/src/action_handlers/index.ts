@@ -9,7 +9,8 @@ import {
   songToServiceItem,
   stateToFolderView,
 } from '../transformers'
-import { findSongs } from '../songs'
+import { findSongs, getSongWithId } from '../songs'
+import { parseLyrics } from '../helpers/parse_lyrics'
 
 export type ActionHandlers = Record<Actions, (t?: any) => Promise<void>> 
 
@@ -56,6 +57,13 @@ export function createActionHandler(properties: HandlerProperties): ActionHandle
     findFolder: async (searchTerm: string) => {
       const foundSongs = await findSongs(searchTerm)
       properties.client.sendSearchResults(foundSongs.map(songToServiceItem))
+    },
+
+    addSongToService: async (songId: number) => {
+      const songToAdd = await getSongWithId(songId)
+      const slides = parseLyrics(songToAdd.lyrics)
+      properties.state.service.push({ type: 'lyric', title: songToAdd.title , slides })
+      properties.broadcaster.sendService(properties.state.service.map(folderToServiceItem))
     },
   }
 }

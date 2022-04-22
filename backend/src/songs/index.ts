@@ -32,3 +32,7 @@ export async function findSongs(searchTerm: string): Promise<Song[]> {
     }
   })
 }
+
+export async function getSongWithId(id: number): Promise<Song | null> {
+  return database.models.songs.findOne({ where: { id } })
+}

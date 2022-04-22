@@ -1,3 +1,4 @@
+import { formatLyrics, LyricSlide } from '../../openlp/format_lyrics'
 import { Song } from '../../songs'
 
 const DEFAULT_LYRICS = `<?xml version='1.0' encoding='UTF-8'?>
@@ -27,9 +28,10 @@ export const songBuilder = () => {
       song.search_title = title.toLowerCase()
       return builder
     },
-    withLyrics: (lyrics: string) => {
-      song.lyrics = lyrics
-      song.search_lyrics = lyrics.toLowerCase()
+    withLyrics: (lyrics: LyricSlide[]) => {
+      const converted = formatLyrics(lyrics)
+      song.lyrics = converted.xml
+      song.search_lyrics = converted.searchLyrics
       return builder
     },
     build: () => {

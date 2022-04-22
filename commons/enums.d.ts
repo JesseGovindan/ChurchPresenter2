@@ -9,5 +9,6 @@ export declare enum Actions {
     deselectFolder = "deselectFolder",
     showSlide = "showSlide",
     hideSlide = "hideSlide",
-    findFolder = "findFolder"
+    findFolder = "findFolder",
+    addSongToService = "addSongToService"
 }

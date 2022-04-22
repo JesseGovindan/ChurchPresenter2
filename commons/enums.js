@@ -15,4 +15,5 @@ var Actions;
     Actions["showSlide"] = "showSlide";
     Actions["hideSlide"] = "hideSlide";
     Actions["findFolder"] = "findFolder";
+    Actions["addSongToService"] = "addSongToService";
 })(Actions = exports.Actions || (exports.Actions = {}));
