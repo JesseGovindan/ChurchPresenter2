@@ -3,7 +3,7 @@ import {useState} from 'react';
 import {ArrowLeft, Plus} from 'react-feather';
 import {useDispatch, useSelector} from 'react-redux';
 import {State} from '../store';
-import {findFolder} from '../store/serviceManagerSlice';
+import {addSongToService, findFolder} from '../store/serviceManagerSlice';
 import {List} from './List';
 import {FolderIcon} from './FolderIcon';
 
@@ -15,6 +15,11 @@ export function Search(props: { hideSearch: () => void }) {
   const handleSearchTermChanged = (newSearchTerm: string) => {
     setSearchTerm(newSearchTerm);
     dispatch(findFolder(newSearchTerm));
+  };
+
+  const handleItemClicked = (id: number) => {
+    dispatch(addSongToService(id));
+    props.hideSearch();
   };
 
   return (
@@ -35,6 +40,7 @@ export function Search(props: { hideSearch: () => void }) {
             return <li
               key={index}
               className='list-item'
+              onClick={() => handleItemClicked(item.id)}
             >
               <FolderIcon type={item.type}/>
               <p>{item.title}</p>
