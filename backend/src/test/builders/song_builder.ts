@@ -5,7 +5,7 @@ const DEFAULT_LYRICS = `<?xml version='1.0' encoding='UTF-8'?>
 <song version="1.0">
   <lyrics>
     <verse label="1" type="v">
-      <![CDATA[You came to the world You created  Trading Your crown for a cross ]]>
+      <![CDATA[You came to the world You created\nTrading Your crown for a cross ]]>
     </verse>
   </lyrics>
 </song>`
@@ -29,9 +29,9 @@ export const songBuilder = () => {
       return builder
     },
     withLyrics: (lyrics: LyricSlide[]) => {
-      const converted = formatLyrics(lyrics)
-      song.lyrics = converted.xml
-      song.search_lyrics = converted.searchLyrics
+      const formattedLyrics = formatLyrics(lyrics)
+      song.lyrics = formattedLyrics.xml
+      song.search_lyrics = formattedLyrics.searchLyrics
       return builder
     },
     build: () => {
