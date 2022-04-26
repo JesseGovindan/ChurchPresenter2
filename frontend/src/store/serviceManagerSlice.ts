@@ -97,7 +97,6 @@ export const epics: Epic<any, any, State>[] = [
   //   );
   // },
 
-  // importServiceEpic
   action$ => {
     return action$.pipe(
       ofType(importService.type),
@@ -123,7 +122,6 @@ export const epics: Epic<any, any, State>[] = [
     );
   },
 
-  // selectFolderEpic
   action$ => {
     return action$.pipe(
       ofType(selectFolder.type),
@@ -134,7 +132,6 @@ export const epics: Epic<any, any, State>[] = [
     );
   },
 
-  // deselectFolderEpic
   action$ => {
     return action$.pipe(
       ofType(deselectFolder.type),
@@ -145,7 +142,6 @@ export const epics: Epic<any, any, State>[] = [
     );
   },
 
-  // showSlideEpic
   action$ => {
     return action$.pipe(
       ofType(showSlide.type),
@@ -156,7 +152,6 @@ export const epics: Epic<any, any, State>[] = [
     );
   },
 
-  // hideSlideEpic
   action$ => {
     return action$.pipe(
       ofType(hideSlide.type),
@@ -167,7 +162,6 @@ export const epics: Epic<any, any, State>[] = [
     );
   },
 
-  // findSongEpic
   action$ => {
     return action$.pipe(
       ofType(findSong.type),
@@ -179,7 +173,6 @@ export const epics: Epic<any, any, State>[] = [
     );
   },
 
-  // addSongToServiceEpic
   action$ => {
     return action$.pipe(
       ofType(addSongToService.type),
