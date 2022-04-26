@@ -50,7 +50,7 @@ export function initialiseActionHandlers(properties: HandlerProperties): ActionH
       })
     },
 
-    findFolder: async (searchTerm: string) => {
+    findSong: async (searchTerm: string) => {
       const foundSongs = await findSongs(searchTerm)
       properties.client.sendSearchResults(foundSongs.map(songToSearchResult))
     },

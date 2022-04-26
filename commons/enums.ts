@@ -10,6 +10,6 @@ export enum Actions {
   deselectFolder = 'deselectFolder',
   showSlide = 'showSlide',
   hideSlide = 'hideSlide',
-  findFolder = 'findFolder',
+  findSong = 'findSong',
   addSongToService = 'addSongToService',
 }

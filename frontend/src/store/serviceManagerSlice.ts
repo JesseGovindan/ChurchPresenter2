@@ -55,7 +55,7 @@ export const serviceManagerSlice = createSlice({
     deselectFolder: createEmptyReducer<ServiceManagerState>(),
     showSlide: createEmptyReducer<ServiceManagerState, SlideSpecifier>(),
     hideSlide: createEmptyReducer<ServiceManagerState>(),
-    findFolder: createEmptyReducer<ServiceManagerState, string>(),
+    findSong: createEmptyReducer<ServiceManagerState, string>(),
     addSongToService: createEmptyReducer<ServiceManagerState, number>(),
   },
 });
@@ -74,7 +74,7 @@ export const {
   showSlide,
   hideSlide,
   folderSelected,
-  findFolder,
+  findSong,
   addSongToService,
 } = serviceManagerSlice.actions;
 export const epics: Epic<any, any, State>[] = [
@@ -167,13 +167,13 @@ export const epics: Epic<any, any, State>[] = [
     );
   },
 
-  // findFolderEpic
+  // findSongEpic
   action$ => {
     return action$.pipe(
-      ofType(findFolder.type),
+      ofType(findSong.type),
       debounceTime(500),
       switchMap(action => {
-        ws.emit(Actions.findFolder, action.payload);
+        ws.emit(Actions.findSong, action.payload);
         return of({type: 'empty'});
       }),
     );
