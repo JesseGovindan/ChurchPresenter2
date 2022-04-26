@@ -37,6 +37,7 @@
     "prettier": "^2.5.0"
   },
   "scripts": {
+    "dev": "REACT_APP_CP_PORT=3001 react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

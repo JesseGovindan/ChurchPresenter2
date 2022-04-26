@@ -2,10 +2,15 @@ import {Data, FolderView} from 'commons';
 import {createContext, useEffect} from 'react';
 import {useDispatch} from 'react-redux';
 import io from 'socket.io-client';
-import {domain} from '../store/config';
 import {folderSelected, searchCompleted, serviceChanged} from '../store/serviceManagerSlice';
 
-const ws = io(domain);
+const ws = io(getSocketAddress());
+
+function getSocketAddress() {
+  const port = process.env.REACT_APP_CP_PORT;
+  const domain = port ? `http://localhost:${port}` : '/';
+  return domain;
+}
 
 const WebSocketContext = createContext(null);
 
