@@ -17,7 +17,7 @@ module.exports = {
   ],
   'rules': {
     'require-jsdoc': 'off',
-    'max-len': [2, { 'code': 100, 'tabWidth': 2 }],
+    'max-len': [2, { 'code': 120, 'tabWidth': 2 }],
     'no-multiple-empty-lines': ['error', { 'max': 1 }],
     'arrow-parens': [2, 'as-needed'],
     'indent': ['error', 2],

@@ -12,12 +12,15 @@ export function MobileApp() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [selectedFolderIndex, setSelectedFolderIndex] = useState(-1);
   const [isSearching, setIsSearching] = useState(false);
+  const [scrollToEnd, setScrollToEnd] = useState(false);
 
   return getShowingComponent();
 
   function getShowingComponent() {
     if (isSearching) {
-      return <Search hideSearch={() => setIsSearching(false)}/>;
+      return <Search
+        hideSearch={() => setIsSearching(false)}
+        itemAdded={() => setScrollToEnd(true)}/>;
     } else {
       return getServiceOrFolderComponent();
     }
@@ -31,6 +34,8 @@ export function MobileApp() {
         showSearch={() => setIsSearching(true)}
         scrollPosition={scrollPosition}
         setScrollPosition={setScrollPosition}
+        scrollToEnd={scrollToEnd}
+        stopScrollToEnd={() => setScrollToEnd(false)}
         selectedFolderIndex={selectedFolderIndex}
         setSelectedFolderIndex={setSelectedFolderIndex}
       />;

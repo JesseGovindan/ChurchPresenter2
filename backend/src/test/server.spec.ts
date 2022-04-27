@@ -1,20 +1,21 @@
-import http from 'http'
 import chai, { expect } from 'chai'
 import { Actions, Data } from 'commons'
+import { SearchResults } from 'commons/interfaces'
+import http from 'http'
+import _ from 'lodash'
 import sinon from 'sinon'
 import sinonChai from 'sinon-chai'
+import socketIoClient, { Socket } from 'socket.io-client'
+import { DefaultEventsMap } from 'socket.io/dist/typed-events'
+
+import * as actionHandlers from '../action_handlers'
+import { createServer } from '../server'
+import { State } from '../state'
+import { allActions } from '../transformers'
+import { CpSocket } from '../websocket_server'
+import { getFileName } from './get_file_name'
 
 chai.use(sinonChai)
-
-import socketIoClient, { Socket } from 'socket.io-client'
-import { CpSocket, createServer } from '../server'
-import { getFileName } from './get_file_name'
-import { DefaultEventsMap } from 'socket.io/dist/typed-events'
-import { State } from '../state'
-import * as actionHandlers from '../action_handlers'
-import { allActions } from '../transformers'
-import _ from 'lodash'
-import { SearchResults } from 'commons/interfaces'
 
 describe(getFileName(__filename), () => {
   let server: http.Server

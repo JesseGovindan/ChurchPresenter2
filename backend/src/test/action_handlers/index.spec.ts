@@ -1,18 +1,19 @@
+import chai, { expect } from 'chai'
+import { Actions, Service } from 'commons'
 import fs from 'fs'
 import path from 'path'
-import chai, { expect } from 'chai'
 import sinon from 'sinon'
 import sinonChai from 'sinon-chai'
-chai.use(sinonChai)
 
-import { Actions, Service } from 'commons'
-import { getFileName } from '../get_file_name'
-import { testService } from '../resources/test_service'
 import { ActionHandlers, initialiseActionHandlers } from '../../action_handlers'
-import { CpSocket } from '../../server'
 import * as songs from '../../songs'
 import { State } from '../../state'
+import { CpSocket } from '../../websocket_server'
 import { songBuilder } from '../builders/song_builder'
+import { getFileName } from '../get_file_name'
+import { testService } from '../resources/test_service'
+
+chai.use(sinonChai)
 
 describe(getFileName(__filename), () => {
   let sandbox: sinon.SinonSandbox
@@ -26,7 +27,7 @@ describe(getFileName(__filename), () => {
   })
 
   describe('when created', () => {
-    const testService: Service = [{
+    const A_SERVICE: Service = [{
       title: 'Song',
       type: 'lyric',
       slides: []
@@ -49,7 +50,7 @@ describe(getFileName(__filename), () => {
       const handler = {
         broadcaster: createSocketStub(),
         client: createSocketStub(),
-        state: { service: testService, folder: {} }
+        state: { service: A_SERVICE, folder: {} }
       }
       // Act
       initialiseActionHandlers(handler)
@@ -65,7 +66,7 @@ describe(getFileName(__filename), () => {
       const handler = {
         broadcaster: createSocketStub(),
         client: createSocketStub(),
-        state: { service: testService, folder: {} }
+        state: { service: A_SERVICE, folder: {} }
       }
       // Act
       initialiseActionHandlers(handler)
@@ -79,7 +80,7 @@ describe(getFileName(__filename), () => {
         broadcaster: createSocketStub(),
         client: createSocketStub(),
         state: {
-          service: testService,
+          service: A_SERVICE,
           folder: {
             selectedFolderIndex: 1,
           }
@@ -112,7 +113,7 @@ describe(getFileName(__filename), () => {
         broadcaster: createSocketStub(),
         client: createSocketStub(),
         state: { 
-          service: testService,
+          service: A_SERVICE,
           folder: {
             selectedFolderIndex: 1,
             shownSlideIndex: 1,
@@ -296,7 +297,7 @@ describe(getFileName(__filename), () => {
 
     describe('findSong', () => {
       it('emits found songs when searched for', async () => {
-      // Arrange
+        // Arrange
         sandbox.stub(songs, 'findSongs').resolves([
           songBuilder().withTitle('Song Title 1').withId(2).build(),
           songBuilder().withTitle('Song Title 2').withId(4).build(),
@@ -316,7 +317,7 @@ describe(getFileName(__filename), () => {
       })
 
       it('searches for songs using the given search term', async () => {
-      // Arrange
+        // Arrange
         const findSongsStub = sandbox.stub(songs, 'findSongs').resolves([])
         // Act
         await actionHandlers[Actions.findSong]('search term')
@@ -326,8 +327,10 @@ describe(getFileName(__filename), () => {
     })
 
     describe('addSongToService', () => {
+      const A_SERVICE_ID = 23
+
       it('broadcasts updated service when a song is added to the service', async () => {
-      // Arrange
+        // Arrange
         sandbox.stub(songs, 'getSongWithId').resolves(
           songBuilder().withTitle('Song Title 1').withLyrics([{
             type: 'v',

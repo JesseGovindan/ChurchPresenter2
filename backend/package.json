@@ -7,6 +7,7 @@
     "test": "npx ts-mocha ./**/*.spec.ts --recursive src/test --no-parallel --exit",
     "clean": "npx shx mkdir -p build && npx shx rm -rf build/*",
     "compile": "npm run clean && tsc",
+    "compile:watch": "npm run clean && tsc -w",
     "serve": "electron build/index.js --onlyApi false",
     "serve-dev": "npx ts-node ./src/index.ts --onlyApi true --serverPort 3001",
     "start": "electron-forge start",

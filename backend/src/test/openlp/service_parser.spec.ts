@@ -1,12 +1,12 @@
 import { expect } from 'chai'
-import path from 'path'
 import fs from 'fs'
+import path from 'path'
 
 import { parseServiceFromOpenLpService } from '../../openlp/service_parser'
 import { getFileName } from '../get_file_name'
-import { testService } from '../resources/test_service'
-import { mightyToSaveSlides } from '../resources/mighty_to_save'
 import { oneKingsNineteenTwoToThree } from '../resources/1_kings_19_2_3'
+import { mightyToSaveSlides } from '../resources/mighty_to_save'
+import { testService } from '../resources/test_service'
 
 describe(getFileName(__filename), () => {
   const openLpServiceFile = fs.readFileSync(path.join(__dirname, '../resources/test.osj'))

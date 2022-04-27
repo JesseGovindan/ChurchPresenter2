@@ -1,31 +1,28 @@
 import express from 'express'
 import http from 'http'
-import path from 'path'
-import socketIoServer from 'socket.io'
-import { Data } from 'commons'
-import { allActions } from './transformers'
-import { FolderView, SearchResults, ServiceList } from 'commons/interfaces'
-import { State } from './state'
 import _ from 'lodash'
-import { initialiseActionHandlers } from './action_handlers'
+import path from 'path'
 
-export interface CpSocket {
-  sendFolder: (folder: FolderView | null) => void
-  sendService: (service: ServiceList) => void
-  sendSearchResults: (results: SearchResults) => void
-}
+import { addSongToService } from './api/add_song_to_service'
+import { createWebSocketServer } from './websocket_server'
+import { State } from './state'
 
 export function createServer(state: State): http.Server {
-  const router = createRouter()
+  const router = createRouter(state)
   const server = http.createServer(router)
   createWebSocketServer(server, state)
   return server
 }
 
-function createRouter() {
+function createRouter(state: State) {
   const router = express()
   disableCors(router)
   addStaticFileRouting(router)
+  router.use('*', (request, _response, next) => {
+    request.state = state
+    next()
+  })
+  router.post('/service/song/:songId', addSongToService)
   return router
 }
 
@@ -43,35 +40,4 @@ function addStaticFileRouting(router: express.Express) {
   const publicPath = path.join(__dirname, 'public')
   router.use(express.static(publicPath))
   router.use('*', express.static(publicPath))
-}
-
-function createWebSocketServer(server: http.Server, state: State) {
-  const wsServer = new socketIoServer.Server(server, {
-    cors: {
-      origin: '*',
-    },
-  })
-  wsServer.on('connection', clientSocket => {
-    const actionHandlers = initialiseActionHandlers({
-      broadcaster: createCpSocket(wsServer),
-      client: createCpSocket(clientSocket),
-      state,
-    })
-
-    allActions().forEach(action => clientSocket.on(action, actionHandlers[action]))
-  })
-}
-
-function createCpSocket(socket: socketIoServer.Server | socketIoServer.Socket): CpSocket {
-  return {
-    sendFolder: (folder: FolderView | null) => {
-      socket.emit(Data.folder, folder)
-    },
-    sendService: (service: ServiceList) => {
-      socket.emit(Data.serviceList, service)
-    },
-    sendSearchResults: (results: SearchResults) => {
-      socket.emit(Data.searchResults, results)
-    }, 
-  }
 }

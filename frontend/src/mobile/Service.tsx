@@ -12,6 +12,8 @@ interface ServiceProps {
   showSearch: () => void
   scrollPosition: number
   setScrollPosition: (newPosition: number) => void
+  scrollToEnd: boolean
+  stopScrollToEnd: () => void
   selectedFolderIndex: number
   setSelectedFolderIndex: (index: number) => void
 }
@@ -24,6 +26,10 @@ export function Service(props: ServiceProps) {
   useLayoutEffect(() => {
     if (listRef.current !== null) {
       listRef.current.scrollTop = props.scrollPosition;
+      if (props.scrollToEnd) {
+        props.stopScrollToEnd();
+        props.setScrollPosition(listRef.current.scrollHeight);
+      }
     }
   }, [listRef, props.scrollPosition]);
 

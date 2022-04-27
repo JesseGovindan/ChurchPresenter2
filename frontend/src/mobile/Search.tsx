@@ -7,7 +7,7 @@ import {addSongToService, findSong} from '../store/serviceManagerSlice';
 import {List} from './List';
 import {FolderIcon} from './FolderIcon';
 
-export function Search(props: { hideSearch: () => void }) {
+export function Search(props: { hideSearch: () => void, itemAdded: () => void }) {
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState('');
   const results = useSelector<State, SearchResults>(state => state.serviceManager.searchResults);
@@ -20,6 +20,7 @@ export function Search(props: { hideSearch: () => void }) {
   const handleItemClicked = (id: number) => {
     dispatch(addSongToService(id));
     props.hideSearch();
+    props.itemAdded();
   };
 
   return (
