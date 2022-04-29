@@ -137,6 +137,11 @@
   & > svg {
     @include squared(2);
   }
+
+  &[data-highlighted='true'] {
+    color: var(--c-high);
+    background-color: var(--c-bg4);
+  }
 }
 
 .icon-button {
