@@ -6,6 +6,7 @@ import path from 'path'
 import { addSongToService } from './api/add_song_to_service'
 import { createWebSocketServer } from './websocket_server'
 import { State } from './state'
+import cors from 'cors'
 
 export function createServer(state: State): http.Server {
   const router = createRouter(state)
@@ -27,11 +28,10 @@ function createRouter(state: State) {
 }
 
 function disableCors(router: express.Express) {
-  router.use('/*', (_, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*')
-    res.header('Access-Control-Allow-Headers', '*')
-    next()
-  })
+  router.use(cors({
+    origin: '*',
+    allowedHeaders: '*',
+  }))
 }
 
 function addStaticFileRouting(router: express.Express) {
