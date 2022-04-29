@@ -2,7 +2,8 @@ import { RequestHandler } from 'express'
 
 import { parseLyrics } from '../helpers/parse_lyrics'
 import { getSongWithId } from '../songs'
-import { broadcaster } from '../websocket_server'
+import { folderToServiceItem } from '../transformers'
+import { getBroadcaster } from '../websocket_server'
 
 export const addSongToService: RequestHandler = async (request, response) => {
   const songId = parseInt(request.params.songId)
@@ -18,7 +19,7 @@ export const addSongToService: RequestHandler = async (request, response) => {
     slides: parseLyrics(songToAdd.lyrics)
   })
 
-  broadcaster.sendService(request.state.service)
+  getBroadcaster().sendService(request.state.service.map(folderToServiceItem))
 
   response.end()
 }

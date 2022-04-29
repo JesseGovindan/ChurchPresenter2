@@ -47,11 +47,11 @@ describe(getFileName(__filename), () => {
 
     beforeEach(() => {
       broadcasterStub = {
-        sendFolder: sinon.stub(),
-        sendSearchResults: sinon.stub(),
-        sendService: sinon.stub(),
+        sendFolder: sandbox.stub(),
+        sendSearchResults: sandbox.stub(),
+        sendService: sandbox.stub(),
       }
-      sinon.stub(websocket_server, 'broadcaster').returns(broadcasterStub)
+      sandbox.stub(websocket_server, 'getBroadcaster').returns(broadcasterStub)
     })
 
     it('returns 200 when song id does exist in the database', done => {
@@ -70,7 +70,7 @@ describe(getFileName(__filename), () => {
       const service: Service = []
       const server = createServer({ service, folder: {} })
       // Act
-      const response = await request(server)
+      await request(server)
         .post(`/service/song/${A_VALID_SONG_ID}`)
       // Assert
       expect(service).to.have.length(1)
@@ -86,7 +86,7 @@ describe(getFileName(__filename), () => {
       const service: Service = []
       const server = createServer({ service, folder: {} })
       // Act
-      const response = await request(server)
+      await request(server)
         .post(`/service/song/${A_VALID_SONG_ID}`)
       // Assert
       expect(broadcasterStub.sendService).to.have.been.calledOnceWith([{

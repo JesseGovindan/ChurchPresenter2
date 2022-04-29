@@ -12,7 +12,11 @@ export interface CpSocket {
   sendSearchResults: (results: SearchResults) => void
 }
 
-export let broadcaster: CpSocket
+let broadcaster: CpSocket
+
+export function getBroadcaster() {
+  return broadcaster
+}
 
 export function createWebSocketServer(server: http.Server, state: State) {
   const wsServer = new socketIoServer.Server(server, {
