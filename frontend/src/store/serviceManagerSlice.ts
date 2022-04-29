@@ -2,10 +2,11 @@ import {Action, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {from} from 'rxjs';
 import {createEmptyReducer} from './Epic';
 import {SongReference} from './previewProjectorSlice';
-import {of, switchMap, debounceTime} from 'rxjs';
+import {of, switchMap, debounceTime, map} from 'rxjs';
 import {Epic, ofType} from 'redux-observable';
+import {ajax} from 'rxjs/ajax';
 import {State} from '.';
-import {ws} from '../websocket';
+import {getServerAddress, ws} from '../websocket';
 import {Actions, ServiceList, FolderView} from 'commons';
 import {SearchResults, SlideSpecifier} from 'commons/interfaces';
 
@@ -14,12 +15,14 @@ export interface ServiceManagerState {
   selectedFolder: FolderView | null
   draggedSong?: SongReference
   searchResults: SearchResults
+  songAdded: boolean
 }
 
 const initialState: ServiceManagerState = {
   currentService: [],
   selectedFolder: null,
   searchResults: [],
+  songAdded: false,
 };
 
 export const serviceManagerSlice = createSlice({
@@ -57,6 +60,14 @@ export const serviceManagerSlice = createSlice({
     hideSlide: createEmptyReducer<ServiceManagerState>(),
     findSong: createEmptyReducer<ServiceManagerState, string>(),
     addSongToService: createEmptyReducer<ServiceManagerState, number>(),
+
+    songAddedToService: state => {
+      state.songAdded = true;
+    },
+
+    acknowledgeSongAdded: state => {
+      state.songAdded = false;
+    },
   },
 });
 
@@ -76,6 +87,8 @@ export const {
   folderSelected,
   findSong,
   addSongToService,
+  songAddedToService,
+  acknowledgeSongAdded,
 } = serviceManagerSlice.actions;
 export const epics: Epic<any, any, State>[] = [
   // songDragCompletedEpic
@@ -177,8 +190,10 @@ export const epics: Epic<any, any, State>[] = [
     return action$.pipe(
       ofType(addSongToService.type),
       switchMap(action => {
-        ws.emit(Actions.addSongToService, action.payload);
-        return of({type: 'empty'});
+        return ajax.post(`${getServerAddress()}service/song/${action.payload}`)
+          .pipe(
+            map(_ => songAddedToService()),
+          );
       }),
     );
   },

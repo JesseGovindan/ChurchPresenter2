@@ -1,16 +1,17 @@
 import {SearchResults} from 'commons/interfaces';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {ArrowLeft, Plus} from 'react-feather';
 import {useDispatch, useSelector} from 'react-redux';
 import {State} from '../store';
-import {addSongToService, findSong} from '../store/serviceManagerSlice';
+import {acknowledgeSongAdded, addSongToService, findSong} from '../store/serviceManagerSlice';
 import {List} from './List';
 import {FolderIcon} from './FolderIcon';
 
-export function Search(props: { hideSearch: () => void, itemAdded: () => void }) {
+export function Search(props: { hideSearch: () => void, highlightAddedItem: () => void }) {
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState('');
   const results = useSelector<State, SearchResults>(state => state.serviceManager.searchResults);
+  const songAdded = useSelector<State, boolean>(state => state.serviceManager.songAdded);
 
   const handleSearchTermChanged = (newSearchTerm: string) => {
     setSearchTerm(newSearchTerm);
@@ -19,9 +20,14 @@ export function Search(props: { hideSearch: () => void, itemAdded: () => void })
 
   const handleItemClicked = (id: number) => {
     dispatch(addSongToService(id));
-    props.hideSearch();
-    props.itemAdded();
   };
+
+  useEffect(() => {
+    if (songAdded) {
+      dispatch(acknowledgeSongAdded());
+      props.highlightAddedItem();
+    }
+  }, [songAdded]);
 
   return (
     <div className='search'>

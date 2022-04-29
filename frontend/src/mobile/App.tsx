@@ -20,7 +20,11 @@ export function MobileApp() {
     if (isSearching) {
       return <Search
         hideSearch={() => setIsSearching(false)}
-        itemAdded={() => setScrollToEnd(true)}/>;
+        highlightAddedItem={() => {
+          setIsSearching(false);
+          setScrollToEnd(true);
+          setSelectedFolderIndex(service.currentService.length - 1);
+        }}/>;
     } else {
       return getServiceOrFolderComponent();
     }

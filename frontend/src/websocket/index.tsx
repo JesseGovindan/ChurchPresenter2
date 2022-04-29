@@ -4,11 +4,11 @@ import {useDispatch} from 'react-redux';
 import io from 'socket.io-client';
 import {folderSelected, searchCompleted, serviceChanged} from '../store/serviceManagerSlice';
 
-const ws = io(getSocketAddress());
+const ws = io(getServerAddress());
 
-function getSocketAddress() {
+export function getServerAddress() {
   const port = process.env.REACT_APP_CP_PORT;
-  const domain = port ? `http://localhost:${port}` : '/';
+  const domain = port ? `http://localhost:${port}/` : '/';
   return domain;
 }
 
