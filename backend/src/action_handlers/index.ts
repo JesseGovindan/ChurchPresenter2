@@ -1,12 +1,12 @@
-import { Open } from 'unzipper'
 import { Actions } from 'commons'
 import { SlideSpecifier } from 'commons/interfaces'
+import { Open } from 'unzipper'
+
 import { parseServiceFromOpenLpService } from '../openlp/service_parser'
-import { CpSocket } from '../websocket_server'
-import { State, FolderState } from '../state'
+import { findSongs } from '../songs'
+import { FolderState, State } from '../state'
 import { folderToServiceItem, songToSearchResult, stateToFolderView } from '../transformers'
-import { findSongs, getSongWithId } from '../songs'
-import { parseLyrics } from '../helpers/parse_lyrics'
+import { CpSocket } from '../websocket_server'
 
 export type ActionHandlers = Record<Actions, (t?: any) => Promise<void>> 
 
@@ -53,17 +53,6 @@ export function initialiseActionHandlers(properties: HandlerProperties): ActionH
     findSong: async (searchTerm: string) => {
       const foundSongs = await findSongs(searchTerm)
       properties.client.sendSearchResults(foundSongs.map(songToSearchResult))
-    },
-
-    addSongToService: async (songId: number) => {
-      const songToAdd = await getSongWithId(songId)
-      if (songToAdd === null) {
-        return
-      }
-
-      const slides = parseLyrics(songToAdd.lyrics)
-      properties.state.service.push({ type: 'lyric', title: songToAdd.title , slides })
-      properties.broadcaster.sendService(properties.state.service.map(folderToServiceItem))
     },
   }
 }

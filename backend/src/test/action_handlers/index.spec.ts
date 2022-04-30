@@ -325,51 +325,6 @@ describe(getFileName(__filename), () => {
         expect(findSongsStub).to.have.been.calledOnceWith('search term')
       })
     })
-
-    describe('addSongToService', () => {
-      const A_SERVICE_ID = 23
-
-      it('broadcasts updated service when a song is added to the service', async () => {
-        // Arrange
-        sandbox.stub(songs, 'getSongWithId').resolves(
-          songBuilder().withTitle('Song Title 1').withLyrics([{
-            type: 'v',
-            lyrics: 'This is my verse',
-            label: '1',
-          }, {
-            type: 'c',
-            lyrics: 'This is my chorus',
-            label: '2',
-          }]).build(),
-        )
-        // Act
-        await actionHandlers[Actions.addSongToService](23)
-        // Assert
-        expect(handler.broadcaster.sendService).to.have.been.calledWith([{
-          type: 'lyric',
-          title: 'Who You Say I Am',
-        }, {
-          type: 'scripture',
-          title: 'Matthew 3:3 (NIV)',
-        }, {
-          title: 'Verse 2',
-          type: 'scripture',
-        }, {
-          title: 'Song Title 1',
-          type: 'lyric',
-        }])
-        expect(handler.state.service).to.have.length(4)
-        expect(handler.state.service[3].title).to.eql('Song Title 1')
-        expect(handler.state.service[3].type).to.eql('lyric')
-        expect(handler.state.service[3].slides).to.eql([{
-          text: 'This is my verse',
-          sectionName: 'V1',
-        }, {
-          text: 'This is my chorus',
-          sectionName: 'C2',
-        }])
-      })
-    })
   })
 
   function createSocketStub(): sinon.SinonStubbedInstance<CpSocket> {

@@ -11,5 +11,4 @@ export enum Actions {
   showSlide = 'showSlide',
   hideSlide = 'hideSlide',
   findSong = 'findSong',
-  addSongToService = 'addSongToService',
 }
