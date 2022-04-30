@@ -1,10 +1,10 @@
 import {Data, FolderView} from 'commons';
 import {createContext, useEffect} from 'react';
 import {useDispatch} from 'react-redux';
-import io from 'socket.io-client';
+import io, {Socket} from 'socket.io-client';
 import {folderSelected, searchCompleted, serviceChanged} from '../store/serviceManagerSlice';
 
-const ws = io(getServerAddress());
+let ws: Socket;
 
 export function getServerAddress() {
   const port = process.env.REACT_APP_CP_PORT;
@@ -18,6 +18,8 @@ const createWsContext = (props: {children: JSX.Element | JSX.Element[] }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    ws = io(getServerAddress());
+
     ws.on(Data.serviceList, service => {
       dispatch(serviceChanged(service));
     });
