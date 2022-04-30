@@ -64,7 +64,7 @@
 }
 
 .overhead-projector[data-type='lyric'] {
-  background-image: url('../static/images/Aqua\ Background.jpg');
+  background-image: url('../static/images/Blue\ Background.png');
 }
 
 .overhead-projector[data-type='scripture'] {
@@ -125,13 +125,15 @@
     display: flex;
     flex-direction: column;
     text-align: center;
-    gap: 4vmin;
-    font-family: jost;
-    font-weight: 500;
+    gap: 2vmin;
+    font-family: heebo;
+    font-weight: 900;
     color: white;
     padding: 2vmin;
 
     text-shadow: 
+      0 0 0.5vmin black,
+      0 0 0.5vmin black,
       0 0 0.5vmin black,
       0 0 0.5vmin black;
   }
