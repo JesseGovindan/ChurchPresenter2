@@ -12,7 +12,6 @@ export function OverheadProjector() {
   const d = useRef<HTMLDivElement>(null);
   const [windowHeight, setWindowHeight] = useState(window.visualViewport.height);
   const [windowWidth, setWindowWidth] = useState(window.visualViewport.width);
-  console.log(fontScale);
 
   useEffect(() => {
     window.onresize = () => {
@@ -40,8 +39,6 @@ export function OverheadProjector() {
       }
     }
 
-    console.log(`window width: ${windowWidth} div width: ${maxWidth}`);
-    console.log(`window height: ${windowHeight} div height: ${rect}`);
     if (rect > windowHeight || maxWidth > windowWidth) {
       setFontScale(c => c - 0.02);
       setMax(fontScale - 0.02);
@@ -76,7 +73,7 @@ function LyricSlide(props: {folder: FolderView, fontScale: number}) {
   const currentSection = slides[showingIndex].sectionName;
 
   let startIndex = showingIndex;
-  for (; startIndex > 0; startIndex--) {
+  for (; startIndex >= 0; startIndex--) {
     if (slides[startIndex].sectionName === currentSection) {
       continue;
     } else {
@@ -96,7 +93,6 @@ function LyricSlide(props: {folder: FolderView, fontScale: number}) {
 
   const verseFontSize = `${(6*props.fontScale).toFixed(2)}vmax`;
   const gapSize = `${(4 * props.fontScale).toFixed(2)}vmin`;
-  console.log(verseFontSize);
 
   const parts = slides.slice(startIndex, endIndex)
     .flatMap(slide => slide.text.split('\n').map(line => ({
@@ -114,7 +110,6 @@ function LyricSlide(props: {folder: FolderView, fontScale: number}) {
 function ScriptureSlide(props: {slide: SlideView, fontScale: number}) {
   const captionFontSize = `${(4*props.fontScale).toFixed(2)}vmax`;
   const verseFontSize = `${(6*props.fontScale).toFixed(2)}vmax`;
-  console.log(captionFontSize);
 
   return (
     <div className='scripture'>
