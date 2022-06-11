@@ -81,6 +81,8 @@ function LyricSlide(props: {folder: FolderView, fontScale: number}) {
       break;
     }
   }
+  startIndex = Math.max(0, startIndex);
+  console.log(`startIndex: ${startIndex}`);
 
   let endIndex = showingIndex;
   for (; endIndex < slides.length; endIndex++) {
