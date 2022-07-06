@@ -32,7 +32,10 @@ export function MobileApp() {
 
   function getServiceOrFolderComponent() {
     if (service.selectedFolder) {
-      return <Folder folder={service.selectedFolder}/>;
+      return <Folder
+        folder={service.selectedFolder}
+        setSelectedFolderIndex={setSelectedFolderIndex}
+      />;
     } else {
       return <Service
         showSearch={() => setIsSearching(true)}

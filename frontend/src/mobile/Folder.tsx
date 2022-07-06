@@ -6,7 +6,12 @@ import {State} from '../store';
 import {LyricList} from './LyricList';
 import {ScriptureList} from './ScriptureList';
 
-export function Folder(props: {folder: FolderView}) {
+interface FolderProps {
+  folder: FolderView
+  setSelectedFolderIndex: (index: number) => void
+}
+
+export function Folder(props: FolderProps) {
   const dispatch = useDispatch();
   const service = useSelector<State, ServiceList>(state => state.serviceManager.currentService);
 
@@ -27,7 +32,10 @@ export function Folder(props: {folder: FolderView}) {
       <ScriptureTraversal
         folder={props.folder}
         service={service}
-        handleClick={folderIndex => dispatch(selectFolder(folderIndex))}
+        handleClick={folderIndex => {
+          props.setSelectedFolderIndex(folderIndex);
+          dispatch(selectFolder(folderIndex));
+        }}
       />
     </div>
   );
@@ -40,33 +48,32 @@ interface ScriptureTraversalProps {
 }
 
 function ScriptureTraversal(props: ScriptureTraversalProps) {
-  const createPreviousTraversalIcon = (position: 'previous' | 'next') => {
-    return position === 'previous' ? <ArrowLeft/> : <div className='spacer'/>;
-  };
+  type ButtonType = 'previous' | 'next'
 
-  const createNextTraversalIcon = (position: 'previous' | 'next') => {
-    return position === 'next' ? <ArrowRight/> : <div className='spacer'/>;
-  };
+  return props.folder.type === 'scripture' ? createButtons() : null;
 
-  const createScriptureTraversalButton = (index: number, position: 'previous' | 'next') => {
-    if (index >= props.service.length || index < 0 || props.service[index].type !== 'scripture') {
-      return null;
-    }
-    return (
-      <button
-        className='folder__traverse__button'
-        onClick={() => props.handleClick(index)}>
-        { createPreviousTraversalIcon(position) }
-        <p>{props.service[index].title}</p>
-        { createNextTraversalIcon(position) }
-      </button>
-    );
-  };
-
-  return props.folder.type === 'scripture' ?
-    <div className='folder__traverse'>
+  function createButtons() {
+    return <div className='folder__traverse'>
       {createScriptureTraversalButton(props.folder.serviceIndex - 1, 'previous')}
       {createScriptureTraversalButton(props.folder.serviceIndex + 1, 'next')}
-    </div> :
-    null;
+    </div>;
+  }
+
+  function createScriptureTraversalButton(index: number, type: ButtonType): JSX.Element | null {
+    return isTraversalAllowedFor(index) ? createButton(index, type) : null;
+  };
+
+  function isTraversalAllowedFor(index: number): boolean {
+    return index >= 0 && index < props.service.length && props.service[index].type === 'scripture';
+  }
+
+  function createButton(index: number, type: ButtonType): JSX.Element {
+    return <button
+      className='folder__traverse__button'
+      onClick={() => props.handleClick(index)}>
+      { type === 'previous' ? <ArrowLeft/> : <div className='spacer'/> }
+      <p>{props.service[index].title}</p>
+      { type === 'next' ? <ArrowRight/> : <div className='spacer'/> }
+    </button>;
+  }
 }
